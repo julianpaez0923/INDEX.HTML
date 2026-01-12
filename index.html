@@ -3,780 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAGA MOBIL | V15 SECURE</title>
+    <title>SAGA MOBIL | V15 ULTIMATE</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --accent: #2563eb; --bg: #09090b; --card: #18181b; --text: #f4f4f5; --border: #27272a; --input: #09090b; }
         .light-mode { --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --border: #e2e8f0; --input: #f1f5f9; }
         
-        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 110px; -webkit-tap-highlight-color: transparent; transition: 0.3s; overflow-x: hidden; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 110px; transition: 0.3s; }
         
-        /* UI Kit & Utility */
-        .glass { background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: 0.3s; position: relative; overflow: hidden; }
-        .input-pro { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 12px; width: 100%; outline: none; font-size: 14px; font-weight: 500; transition: 0.2s; }
-        .input-pro:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
-        .btn-action { width: 100%; padding: 16px; background: var(--accent); color: white; border-radius: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-action:active { transform: scale(0.98); opacity: 0.9; }
-        .search-bar { position: relative; margin-bottom: 15px; }
-        .search-bar i { position: absolute; left: 14px; top: 14px; color: #71717a; width: 18px; }
-        .search-bar input { padding-left: 40px; }
-
-        /* Splash Screen */
-        #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; items-center; transition: opacity 0.5s; }
+        .glass { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+        .input-pro { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 12px; width: 100%; outline: none; font-size: 14px; }
+        .btn-action { width: 100%; padding: 16px; background: var(--accent); color: white; border-radius: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         
-        /* Dock Navigation Scrollable */
+        /* Dock Navigation */
         .dock-container { position: fixed; bottom: 20px; left: 15px; right: 15px; z-index: 1000; }
-        .dock { height: 75px; background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; display: flex; align-items: center; padding: 0 10px; overflow-x: auto; gap: 5px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); scrollbar-width: none; }
-        .light-mode .dock { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.05); }
+        .dock { height: 75px; background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; display: flex; align-items: center; padding: 0 10px; overflow-x: auto; gap: 5px; scrollbar-width: none; }
         .dock::-webkit-scrollbar { display: none; }
-        .dock-item { min-width: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; transition: 0.3s; cursor: pointer; height: 100%; border-radius: 15px; }
-        .dock-item.active { color: var(--accent); background: rgba(37, 99, 235, 0.1); }
+        .dock-item { min-width: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; flex: 1; }
+        .dock-item.active { color: var(--accent); background: rgba(37, 99, 235, 0.1); border-radius: 15px; }
         .dock-item span { font-size: 8px; font-weight: 800; margin-top: 3px; text-transform: uppercase; }
 
-        /* Page Transitions */
-        .page-content { display: none; padding: 20px; animation: fadeIn 0.3s ease; padding-bottom: 120px; }
+        .page-content { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .page-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* PDF Preview & Labels */
-        .preview-wrapper { width: 100%; overflow-x: auto; background: #333; padding: 20px; border-radius: 15px; display: flex; justify-content: center; margin-bottom: 20px; }
-        .sheet-a4 { width: 210mm; min-height: 297mm; background: white; color: black; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.5); transform-origin: top center; transform: scale(0.40); margin-bottom: -160mm; }
-        .label-design { background: white; color: black; border: 4px solid black; padding: 20px; page-break-inside: avoid; margin-bottom: 20px; position: relative; }
-        
+        /* Estilos para PDF Tamaño Carta Real */
+        #pdf-render-area { position: absolute; left: -9999px; top: 0; }
+        .sheet-letter { 
+            width: 216mm; 
+            min-height: 279mm; 
+            padding: 20mm; 
+            background: white !important; 
+            color: black !important; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* Calc Grid */
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .btn-calc { background: var(--input); padding: 18px 0; border-radius: 12px; font-size: 1.4rem; font-weight: 700; color: var(--text); border: 1px solid var(--border); }
-        
-        /* Badges & Chips */
-        .chip { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; border: 1px solid var(--border); background: var(--card); color: var(--text); white-space: nowrap; }
-        .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
-        .st-sent { background: #3b82f6; color: white; }
-        .st-pending { background: #eab308; color: black; }
-        .st-done { background: #22c55e; color: white; }
-
-        @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; }
-        }
     </style>
 </head>
 <body>
 
-    <section id="splash-screen">
-        <div class="text-center">
-            <h1 class="text-6xl font-black italic text-blue-600 tracking-tighter mb-2">SAGA</h1>
-            <p class="text-xs font-bold uppercase tracking-[6px] opacity-60 mb-8">Logistics Enterprise</p>
-            <button onclick="enterApp()" class="bg-white text-black px-8 py-3 rounded-full font-black text-sm hover:scale-105 transition shadow-lg flex items-center gap-2 mx-auto">
-                INGRESAR SISTEMA <i data-lucide="arrow-right" class="w-4"></i>
-            </button>
-            <p class="text-[10px] mt-8 opacity-30">V15.0 SECURE</p>
-        </div>
-    </section>
-
-    <div class="dock-container hidden" id="main-dock">
+    <div class="dock-container" id="main-dock">
         <nav class="dock">
             <div onclick="nav('dash')" class="dock-item active" id="n-dash"><i data-lucide="layout-grid"></i><span>Panel</span></div>
             <div onclick="nav('shelf')" class="dock-item" id="n-shelf"><i data-lucide="package"></i><span>Bodega</span></div>
-            <div onclick="nav('tasks')" class="dock-item" id="n-tasks"><i data-lucide="check-square"></i><span>Tareas</span></div>
             <div onclick="nav('envios')" class="dock-item" id="n-envios"><i data-lucide="truck"></i><span>Envíos</span></div>
-            <div onclick="nav('devol')" class="dock-item" id="n-devol"><i data-lucide="rotate-ccw"></i><span>Devol.</span></div>
-            <div onclick="nav('remi')" class="dock-item" id="n-remi"><i data-lucide="file-text"></i><span>Remisión</span></div>
-            <div onclick="nav('hist')" class="dock-item" id="n-hist"><i data-lucide="history"></i><span>Historial</span></div>
-            <div onclick="nav('label')" class="dock-item" id="n-label"><i data-lucide="tag"></i><span>Rótulos</span></div>
+            <div onclick="nav('remi')" class="dock-item" id="n-remi"><i data-lucide="file-text"></i><span>Remitir</span></div>
             <div onclick="nav('calc')" class="dock-item" id="n-calc"><i data-lucide="calculator"></i><span>Calc</span></div>
+            <div onclick="nav('config')" class="dock-item" id="n-config"><i data-lucide="settings"></i><span>Backup</span></div>
         </nav>
     </div>
 
-    <div id="modal-firma" class="fixed inset-0 bg-black/90 z-[3000] hidden flex-col justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl overflow-hidden w-full max-w-md mx-auto">
-            <div class="p-4 bg-zinc-100 flex justify-between items-center border-b">
-                <h3 class="font-black text-black">FIRMA DIGITAL</h3>
-                <button onclick="document.getElementById('modal-firma').style.display='none'" class="text-zinc-500"><i data-lucide="x"></i></button>
+    <div id="pdf-render-area">
+        <div id="remi-final-sheet" class="sheet-letter">
+            <div style="display: flex; justify-content: space-between; border-bottom: 5px solid #1e40af; padding-bottom: 20px; margin-bottom: 30px;">
+                <div>
+                    <h1 style="font-size: 48px; font-weight: 900; color: #1e40af; margin: 0; line-height: 1;">NICHOLL´S TACTICA</h1>
+                    <p style="letter-spacing: 6px; font-weight: bold; color: #666; font-size: 14px;">FUSAGASUGA - LOGISTICS</p>
+                </div>
+                <div style="text-align: right;">
+                    <h2 style="font-size: 28px; color: #999; margin: 0;">REMISIÓN</h2>
+                    <p style="font-size: 32px; font-weight: 900; color: black;" id="pdf-num">N° 0000</p>
+                    <p style="font-size: 18px; color: #2563eb; font-weight: bold;" id="pdf-fecha">00/00/0000</p>
+                </div>
             </div>
-            <canvas id="canvas-firma" class="w-full h-64 bg-white cursor-crosshair touch-none"></canvas>
-            <div class="p-4 bg-zinc-100 flex gap-2">
-                <button onclick="sigPad.clear()" class="flex-1 py-3 text-red-500 font-bold text-sm">BORRAR</button>
-                <button onclick="guardarFirma()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm">CONFIRMAR</button>
+            <div style="margin-bottom: 40px; background: #f8fafc; padding: 20px; border-radius: 10px;">
+                <p style="font-size: 12px; font-weight: bold; color: #2563eb; margin: 0;">CLIENTE / DESTINATARIO:</p>
+                <h3 style="font-size: 38px; font-weight: 900; margin: 5px 0; text-transform: uppercase;" id="pdf-cli">---</h3>
+                <p style="font-size: 20px; font-weight: bold; color: #666;" id="pdf-doc">NIT: ---</p>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 50px;">
+                <thead>
+                    <tr style="background: #1e40af; color: white; font-size: 18px;">
+                        <th style="padding: 15px; text-align: left; width: 120px; border: 1px solid #1e40af;">CANT.</th>
+                        <th style="padding: 15px; text-align: left; border: 1px solid #1e40af;">DESCRIPCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody id="pdf-table-body" style="font-size: 20px; font-weight: 600; color: #333;"></tbody>
+            </table>
+            <div style="margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding-bottom: 60px;">
+                <div style="border-top: 2px solid #ccc; padding-top: 15px;">
+                    <p style="font-size: 11px; font-weight: bold; color: #999;">DESPACHADO POR:</p>
+                    <p style="font-size: 22px; font-weight: 900;">JULIAN ACOSTA</p>
+                </div>
+                <div style="border-top: 2px solid black; padding-top: 15px; position: relative;">
+                    <p style="font-size: 11px; font-weight: bold; color: #999;">RECIBIDO CONFORME:</p>
+                    <img id="pdf-sign-img" style="height: 120px; position: absolute; top: -100px; left: 30px; display: none;">
+                    <p style="font-size: 22px; font-weight: 900; text-transform: uppercase;" id="pdf-cli-sign">---</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <main id="app-content" class="hidden">
-        
+    <main id="app">
         <section id="sec-dash" class="page-content active">
             <header class="flex justify-between items-center mb-6">
-                <div>
-                    <h1 class="text-3xl font-black italic text-blue-600 tracking-tighter">SAGA <span class="text-zinc-500 font-light">V15</span></h1>
-                    <p class="text-[10px] font-bold uppercase tracking-[3px] opacity-60">Enterprise Secure</p>
-                </div>
-                <button onclick="toggleTheme()" class="w-10 h-10 glass flex items-center justify-center text-yellow-500"><i data-lucide="sun" id="theme-icon"></i></button>
+                <h1 class="text-3xl font-black italic text-blue-600">SAGA V15</h1>
+                <button onclick="toggleTheme()" class="w-10 h-10 glass flex items-center justify-center text-yellow-500"><i data-lucide="sun"></i></button>
             </header>
-
-            <div class="glass p-4 mb-6 border border-yellow-500/30">
-                <h3 class="text-[10px] font-black uppercase text-yellow-600 tracking-widest mb-3">ZONA DE SEGURIDAD DE DATOS</h3>
-                <div class="flex gap-2">
-                    <button onclick="exportData()" class="flex-1 py-3 bg-zinc-800 text-white rounded-xl font-bold text-[10px] flex flex-col items-center justify-center gap-1">
-                        <i data-lucide="save" class="w-4"></i> DESCARGAR COPIA
-                    </button>
-                    <button onclick="document.getElementById('file-input').click()" class="flex-1 py-3 bg-zinc-800 text-white rounded-xl font-bold text-[10px] flex flex-col items-center justify-center gap-1">
-                        <i data-lucide="upload" class="w-4"></i> RESTAURAR DATOS
-                    </button>
-                    <input type="file" id="file-input" class="hidden" accept=".json" onchange="importData(this)">
+            
+            <div class="glass p-5 space-y-4 mb-6">
+                <div class="flex p-1 bg-zinc-800/10 rounded-xl">
+                    <button id="btn-ent" onclick="setOp('ENTRADA')" class="flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs">ENTRADA</button>
+                    <button id="btn-sal" onclick="setOp('SALIDA')" class="flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs">SALIDA</button>
                 </div>
-                <p class="text-[9px] opacity-40 mt-2 text-center">Descarga tu copia semanalmente para evitar pérdida de datos.</p>
-            </div>
-
-            <div class="grid grid-cols-3 gap-2 mb-6">
-                <div class="glass p-3 text-center border-b-4 border-blue-500">
-                    <h2 id="kpi-stock" class="text-2xl font-black">0</h2>
-                    <p class="text-[8px] font-bold uppercase opacity-50">Stock Total</p>
-                </div>
-                <div class="glass p-3 text-center border-b-4 border-green-500">
-                    <h2 id="kpi-envios" class="text-2xl font-black">0</h2>
-                    <p class="text-[8px] font-bold uppercase opacity-50">Envíos Act.</p>
-                </div>
-                <div class="glass p-3 text-center border-b-4 border-red-500">
-                    <h2 id="kpi-pend" class="text-2xl font-black">0</h2>
-                    <p class="text-[8px] font-bold uppercase opacity-50">Tareas Pend.</p>
-                </div>
-            </div>
-
-            <div class="glass p-5 space-y-4">
-                <h3 class="text-xs font-black uppercase text-blue-500 tracking-widest mb-2">Registro Rápido</h3>
-                
-                <div class="flex p-1 bg-zinc-800/10 rounded-xl mb-2">
-                    <button id="btn-ent" onclick="setOp('ENTRADA')" class="flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs shadow-lg transition-all">ENTRADA</button>
-                    <button id="btn-sal" onclick="setOp('SALIDA')" class="flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs transition-all">SALIDA</button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="m-prod" placeholder="Producto" class="input-pro col-span-2" list="list-prods">
-                    <input type="number" id="m-cant" placeholder="Cant." class="input-pro">
-                    <input type="text" id="m-uni" placeholder="Unidad" class="input-pro">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="m-prov" placeholder="Proveedor / Dest." class="input-pro">
-                    <input type="text" id="m-oc" placeholder="O.C. / Ref" class="input-pro">
-                </div>
+                <input type="text" id="m-prod" placeholder="Producto" class="input-pro">
+                <input type="number" id="m-cant" placeholder="Cantidad" class="input-pro">
                 <select id="m-loc" class="input-pro">
                     <option value="PASILLO A">PASILLO A</option>
                     <option value="PASILLO B">PASILLO B</option>
                     <option value="PARQUEADERO">PARQUEADERO</option>
-                    <option value="OFICINA">OFICINA</option>
-                    <option value="ENTREGADO">ENTREGADO</option>
                 </select>
-                <input type="text" id="m-note" placeholder="Observaciones" class="input-pro">
-                
-                <button onclick="registrar()" class="btn-action bg-zinc-900 text-white border border-zinc-700">GUARDAR REGISTRO</button>
+                <button onclick="registrarCloud()" class="btn-action">GUARDAR EN CLOUD (EXCEL)</button>
             </div>
         </section>
 
         <section id="sec-shelf" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-blue-600">Stock por Zonas</h2>
-            <div class="search-bar">
-                <i data-lucide="search"></i>
-                <input type="text" id="search-shelf" oninput="renderShelf()" placeholder="Buscar producto en bodega..." class="input-pro">
-            </div>
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-                <button onclick="filterShelf('TODO')" class="chip active" id="f-shelf-TODO">Todo</button>
-                <button onclick="filterShelf('PASILLO A')" class="chip" id="f-shelf-PASILLOA">Pasillo A</button>
-                <button onclick="filterShelf('PASILLO B')" class="chip" id="f-shelf-PASILLOB">Pasillo B</button>
-                <button onclick="filterShelf('PARQUEADERO')" class="chip" id="f-shelf-PARQUEADERO">Parqueadero</button>
-                <button onclick="filterShelf('OFICINA')" class="chip" id="f-shelf-OFICINA">Oficina</button>
-            </div>
-            <div id="shelf-view" class="space-y-4"></div>
-        </section>
-
-        <section id="sec-tasks" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-purple-600">Tareas Pendientes</h2>
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="task-input" placeholder="Nueva tarea..." class="input-pro">
-                <button onclick="addTask()" class="bg-purple-600 text-white rounded-xl w-14 font-black text-xl flex items-center justify-center">+</button>
-            </div>
-            <div class="search-bar">
-                <i data-lucide="search"></i>
-                <input type="text" id="search-tasks" oninput="renderTasks()" placeholder="Filtrar tareas..." class="input-pro">
-            </div>
-            <div id="tasks-list" class="space-y-2"></div>
-        </section>
-
-        <section id="sec-envios" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-yellow-600">Gestión de Envíos</h2>
-            <div class="glass p-4 mb-6">
-                <h3 class="text-[10px] font-black uppercase opacity-50 mb-2">Nuevo Envío</h3>
-                <input type="text" id="e-dest" placeholder="Destinatario" class="input-pro mb-2">
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <input type="text" id="e-guia" placeholder="# Guía" class="input-pro">
-                    <input type="text" id="e-trans" placeholder="Transportadora" class="input-pro">
-                </div>
-                <button onclick="addEnvio()" class="btn-action bg-yellow-600 text-black">REGISTRAR ENVÍO</button>
-            </div>
-            <div class="flex gap-2 mb-4 overflow-x-auto">
-                <button onclick="filterEnvios('ALL')" class="chip active">Todos</button>
-                <button onclick="filterEnvios('PENDIENTE')" class="chip">Pendientes</button>
-                <button onclick="filterEnvios('EN_TRANSITO')" class="chip">En Tránsito</button>
-                <button onclick="filterEnvios('ENTREGADO')" class="chip">Entregados</button>
-            </div>
-            <div class="search-bar">
-                <i data-lucide="search"></i>
-                <input type="text" id="search-envios" oninput="renderEnvios()" placeholder="Buscar guía o destino..." class="input-pro">
-            </div>
-            <div id="envios-list" class="space-y-3"></div>
-        </section>
-
-        <section id="sec-devol" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-red-600">Devoluciones</h2>
-            <div class="glass p-4 mb-6 border-l-4 border-red-600">
-                <h3 class="text-[10px] font-black uppercase opacity-50 mb-2">Registrar Devolución</h3>
-                <input type="text" id="d-prod" placeholder="Producto Devuelto" class="input-pro mb-2" list="list-prods">
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <input type="number" id="d-cant" placeholder="Cantidad" class="input-pro">
-                    <select id="d-motivo" class="input-pro">
-                        <option value="DAÑO">Dañado</option>
-                        <option value="ERROR">Error Pedido</option>
-                        <option value="GARANTIA">Garantía</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-3 mb-2">
-                    <input type="checkbox" id="d-restock" class="w-5 h-5 accent-red-600">
-                    <label for="d-restock" class="text-sm font-bold">Retornar al Inventario (Stock)</label>
-                </div>
-                <button onclick="addDevolucion()" class="btn-action bg-red-600">PROCESAR DEVOLUCIÓN</button>
-            </div>
-            <div id="devol-list" class="space-y-3"></div>
+            <h2 class="text-2xl font-black mb-4">Stock en Bodega</h2>
+            <div id="shelf-list" class="space-y-3"></div>
         </section>
 
         <section id="sec-remi" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Remisiones</h2>
-            <div class="glass p-5 mb-6">
-                <div class="space-y-3">
-                    <input type="text" id="r-cli" placeholder="Cliente" class="input-pro font-bold" oninput="updatePreview()">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="r-nit" placeholder="NIT / CC" class="input-pro" oninput="updatePreview()">
-                        <input type="text" id="r-tel" placeholder="Teléfono" class="input-pro" oninput="updatePreview()">
-                    </div>
-                    <div class="p-3 bg-zinc-500/10 rounded-xl mt-4">
-                        <div class="flex gap-2">
-                            <input type="text" id="r-item" placeholder="Item" class="input-pro flex-[2]">
-                            <input type="number" id="r-q" placeholder="#" class="input-pro flex-1">
-                            <button onclick="addItemRem()" class="bg-blue-600 text-white rounded-xl w-12 font-black text-xl">+</button>
-                        </div>
-                    </div>
-                    <button onclick="abrirFirma()" class="w-full py-3 bg-zinc-200 text-black rounded-xl font-bold text-xs flex items-center justify-center gap-2">
-                        <i data-lucide="pen-tool" class="w-4"></i> FIRMAR
-                    </button>
+            <h2 class="text-2xl font-black mb-4">Generar Remisión</h2>
+            <div class="glass p-5 space-y-3 mb-4">
+                <input type="text" id="r-cli" placeholder="Nombre del Cliente" class="input-pro">
+                <input type="text" id="r-doc" placeholder="NIT / Cédula" class="input-pro">
+                <div class="flex gap-2">
+                    <input type="text" id="r-item" placeholder="Producto" class="input-pro">
+                    <input type="number" id="r-q" placeholder="Cant" class="input-pro w-20">
+                    <button onclick="addItem()" class="bg-blue-600 text-white w-12 rounded-xl font-bold">+</button>
                 </div>
+                <button onclick="abrirFirma()" class="w-full py-3 bg-zinc-200 text-black rounded-xl font-bold text-xs">FIRMAR RECEPTOR</button>
+                <button onclick="generarPDFCarta()" class="btn-action bg-green-600">DESCARGAR HOJA CARTA PDF</button>
             </div>
-            <div class="preview-wrapper">
-                <div id="remi-sheet" class="sheet-a4 relative">
-                    <div class="flex justify-between border-b-4 border-blue-900 pb-4 mb-6">
-                        <div><h1 class="text-4xl font-black text-blue-900">SAGA</h1><p class="text-xs uppercase tracking-widest text-zinc-500">Logistics Service</p></div>
-                        <div class="text-right"><h2 class="text-2xl font-bold">REMISIÓN</h2><p class="text-lg text-red-600 font-mono">N° <span id="pv-num">0000</span></p></div>
-                    </div>
-                    <div class="mb-6"><p><strong>CLIENTE:</strong> <span id="pv-cli">---</span></p><p><strong>NIT:</strong> <span id="pv-nit">---</span></p></div>
-                    <table class="w-full mb-10 text-sm">
-                        <thead class="bg-blue-900 text-white"><tr class="text-left"><th class="p-2">CANT</th><th class="p-2">DESCRIPCIÓN</th></tr></thead>
-                        <tbody id="pv-items" class="divide-y divide-gray-200"></tbody>
-                    </table>
-                    <div class="absolute bottom-20 left-10 right-10 flex justify-between">
-                        <div class="border-t border-black pt-2 w-40 text-center text-xs font-bold">AUTORIZADO</div>
-                        <div class="border-t border-black pt-2 w-40 text-center text-xs font-bold relative">
-                            <img id="pv-sign-img" class="absolute -top-12 left-0 right-0 h-12 object-contain hidden mx-auto">RECIBIDO
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button onclick="saveRemision()" class="btn-action">GENERAR PDF</button>
+            <div id="remi-preview-list" class="text-xs space-y-1 opacity-60"></div>
         </section>
 
-        <section id="sec-hist" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Historial</h2>
-            <div class="search-bar">
-                <i data-lucide="search"></i>
-                <input type="text" id="search-hist" oninput="renderHist()" placeholder="Buscar movimiento..." class="input-pro">
+        <section id="sec-config" class="page-content">
+            <h2 class="text-2xl font-black mb-4">Seguridad de Datos</h2>
+            <div class="glass p-5 space-y-4">
+                <button onclick="exportDB()" class="btn-action bg-zinc-800 text-white">💾 DESCARGAR COPIA DE SEGURIDAD</button>
+                <input type="file" id="import-file" class="hidden" onchange="importDB(this)">
+                <button onclick="document.getElementById('import-file').click()" class="btn-action bg-zinc-800 text-white">📂 RESTAURAR DATOS</button>
             </div>
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
-                <button onclick="filterHist('TODO')" class="chip active">Todo</button>
-                <button onclick="filterHist('ENTRADA')" class="chip">Entradas</button>
-                <button onclick="filterHist('SALIDA')" class="chip">Salidas</button>
-                <button onclick="filterHist('REMISSION')" class="chip">Remisiones</button>
-            </div>
-            <div id="hist-list" class="space-y-3"></div>
         </section>
-
-        <section id="sec-label" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Rótulos</h2>
-            <div class="glass p-5 space-y-3 mb-6">
-                <input type="text" id="l-dest" placeholder="DESTINATARIO" class="input-pro uppercase font-black">
-                <input type="text" id="l-cont" placeholder="CONTENIDO" class="input-pro">
-                <div class="grid grid-cols-3 gap-2">
-                    <input type="text" id="l-caja" placeholder="Caja #" class="input-pro text-center">
-                    <input type="text" id="l-total" placeholder="De #" class="input-pro text-center">
-                    <input type="text" id="l-peso" placeholder="Kg" class="input-pro text-center">
-                </div>
-                <button onclick="addLabel()" class="btn-action bg-emerald-600">AGREGAR</button>
-            </div>
-            <div class="flex justify-between mb-2"><span class="text-xs font-bold opacity-50">COLA DE IMPRESIÓN</span><button onclick="window.print()" class="text-blue-500 font-bold text-xs">IMPRIMIR</button></div>
-            <div id="print-area"><div id="labels-container"></div></div>
-        </section>
-
+        
         <section id="sec-calc" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Calculadora</h2>
+            <h2 class="text-2xl font-black mb-4">Calculadora</h2>
             <div class="glass p-6">
-                <div class="bg-black/20 p-4 rounded-xl mb-4 text-right overflow-x-auto"><p id="calc-hist" class="text-xs opacity-50 h-4"></p><p id="calc-res" class="text-4xl font-mono font-black">0</p></div>
+                <div id="calc-res" class="text-4xl font-black text-right mb-4 p-4 bg-black/5 rounded-xl">0</div>
                 <div class="calc-grid">
                     <button class="btn-calc text-red-500" onclick="cAction('C')">C</button>
-                    <button class="btn-calc" onclick="cAction('DEL')">←</button>
-                    <button class="btn-calc text-blue-500" onclick="cInput('%')">%</button>
-                    <button class="btn-calc text-blue-500" onclick="cInput('/')">÷</button>
+                    <button class="btn-calc" onclick="cInput('/')">/</button>
+                    <button class="btn-calc" onclick="cInput('*')">×</button>
+                    <button class="btn-calc" onclick="cInput('-')">-</button>
                     <button class="btn-calc" onclick="cInput('7')">7</button>
                     <button class="btn-calc" onclick="cInput('8')">8</button>
                     <button class="btn-calc" onclick="cInput('9')">9</button>
-                    <button class="btn-calc text-blue-500" onclick="cInput('*')">×</button>
+                    <button class="btn-calc" onclick="cInput('+')">+</button>
                     <button class="btn-calc" onclick="cInput('4')">4</button>
                     <button class="btn-calc" onclick="cInput('5')">5</button>
                     <button class="btn-calc" onclick="cInput('6')">6</button>
-                    <button class="btn-calc text-blue-500" onclick="cInput('-')">-</button>
-                    <button class="btn-calc" onclick="cInput('1')">1</button>
-                    <button class="btn-calc" onclick="cInput('2')">2</button>
-                    <button class="btn-calc" onclick="cInput('3')">3</button>
-                    <button class="btn-calc text-blue-500" onclick="cInput('+')">+</button>
-                    <button class="btn-calc col-span-2" onclick="cInput('0')">0</button>
-                    <button class="btn-calc" onclick="cInput('.')">.</button>
-                    <button class="btn-calc bg-blue-600 text-white border-none" onclick="cResult()">=</button>
+                    <button class="btn-calc bg-blue-600 text-white" onclick="cResult()">=</button>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <datalist id="list-prods"></datalist>
+    <div id="modal-firma" class="fixed inset-0 bg-white z-[3000] hidden flex-col">
+        <div class="p-4 bg-black text-white flex justify-between">
+            <button onclick="sigPad.clear()" class="font-bold">BORRAR</button>
+            <button onclick="cerrarFirma()" class="bg-blue-600 px-4 py-1 rounded">GUARDAR</button>
+        </div>
+        <canvas id="canvas-firma" class="flex-1 bg-gray-100"></canvas>
+    </div>
 
     <script>
-        // --- BASE DE DATOS Y ESTADO ---
-        const DB_KEY = 'SAGA_V15_DB';
-        let db = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            productos: [],
-            movs: [],
-            tasks: [],
-            envios: [],
-            devoluciones: [],
-            remisiones: [],
-            labels: [],
-            op: 'ENTRADA'
-        };
-
-        // Variables Temporales
-        let tempRem = [];
+        let db = JSON.parse(localStorage.getItem('SAGA_DB')) || { prods: [], movs: [], op: 'ENTRADA' };
+        let itemsRem = [];
         let sigPad;
-        let calcExp = "";
-        let currentShelfFilter = 'TODO';
-        let currentEnvioFilter = 'ALL';
+        const SHEETS_URL = "TU_URL_DE_APPS_SCRIPT"; // REEMPLAZAR CON TU URL
 
-        // --- ARRANQUE ---
-        window.onload = () => {
-            if (localStorage.getItem('SAGA_THEME') === 'light') toggleTheme(false);
-            initSignature();
-            renderAll();
-            lucide.createIcons();
-            // Auto-guardado de seguridad al iniciar
-            if(!localStorage.getItem(DB_KEY)) save(); 
-        };
+        function save() { localStorage.setItem('SAGA_DB', JSON.stringify(db)); renderShelf(); }
 
-        function enterApp() {
-            document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                document.getElementById('app-content').classList.remove('hidden');
-                document.getElementById('main-dock').classList.remove('hidden');
-            }, 500);
-        }
-
-        const save = () => { localStorage.setItem(DB_KEY, JSON.stringify(db)); renderAll(); };
-
-        // --- SISTEMA DE COPIA DE SEGURIDAD (BACKUP) ---
-        function exportData() {
-            const dataStr = JSON.stringify(db);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = 'SAGA_BACKUP_'+ new Date().toLocaleDateString().replace(/\//g,'-') +'.json';
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-
-        function importData(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const contenido = JSON.parse(e.target.result);
-                    // Verificación básica de que es un archivo válido
-                    if(contenido.productos && contenido.movs) {
-                        if(confirm("⚠️ ¿Estás seguro? Esto reemplazará los datos actuales con la copia de seguridad.")) {
-                            db = contenido;
-                            save();
-                            alert("✅ Datos restaurados correctamente.");
-                            location.reload();
-                        }
-                    } else {
-                        alert("❌ Archivo inválido o corrupto.");
-                    }
-                } catch(err) {
-                    alert("❌ Error al leer el archivo.");
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // --- NAVEGACIÓN ---
         function nav(id) {
-            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('sec-' + id).classList.add('active');
-            document.getElementById('n-' + id).classList.add('active');
-            
-            // Refrescos específicos
-            if(id === 'shelf') renderShelf();
-            if(id === 'tasks') renderTasks();
-            if(id === 'envios') renderEnvios();
-            if(id === 'devol') renderDevoluciones();
-            if(id === 'hist') renderHist();
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.dock-item').forEach(p => p.classList.remove('active'));
+            document.getElementById('sec-'+id).classList.add('active');
+            document.getElementById('n-'+id).classList.add('active');
             lucide.createIcons();
         }
 
-        function toggleTheme(switchIt = true) {
-            if(switchIt) document.body.classList.toggle('light-mode');
-            else document.body.classList.add('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            document.getElementById('theme-icon').setAttribute('data-lucide', isLight ? 'moon' : 'sun');
-            localStorage.setItem('SAGA_THEME', isLight ? 'light' : 'dark');
-            lucide.createIcons();
-        }
-
-        // --- 1. DASHBOARD & REGISTRO ---
         function setOp(op) {
             db.op = op;
-            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs shadow-lg" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
-            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-2 rounded-lg bg-red-600 text-white font-black text-xs shadow-lg" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
+            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
+            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-2 rounded-lg bg-red-600 text-white font-black text-xs" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
         }
 
-        function registrar() {
-            const prod = document.getElementById('m-prod').value.toUpperCase();
-            const cant = parseFloat(document.getElementById('m-cant').value);
-            const loc = document.getElementById('m-loc').value;
+        async function registrarCloud() {
+            const p = document.getElementById('m-prod').value.toUpperCase();
+            const c = parseFloat(document.getElementById('m-cant').value);
+            const l = document.getElementById('m-loc').value;
 
-            if(!prod || isNaN(cant)) return alert("Datos incompletos");
+            if(!p || isNaN(c)) return alert("Faltan datos");
 
-            // Actualizar stock
-            let p = db.productos.find(x => x.nom === prod);
-            if(!p) { p = { nom: prod, stk: 0, loc: loc }; db.productos.push(p); }
+            // Actualizar DB local
+            let item = db.prods.find(x => x.n === p);
+            if(!item) { item = { n: p, q: 0, l: l }; db.prods.push(item); }
+            item.q += (db.op === 'ENTRADA' ? c : -c);
+            item.l = l;
             
-            p.stk += (db.op === 'ENTRADA' ? cant : -cant);
-            p.loc = loc; // Actualizar ubicación
-
-            // Log
-            db.movs.push({
-                tipo: db.op, prod, cant, loc, 
-                fecha: new Date().toLocaleDateString(),
-                hora: new Date().toLocaleTimeString(),
-                ts: Date.now(),
-                uni: document.getElementById('m-uni').value,
-                prov: document.getElementById('m-prov').value,
-                oc: document.getElementById('m-oc').value,
-                note: document.getElementById('m-note').value
-            });
+            // Enviar a Google Sheets
+            try {
+                fetch(SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ tipo: db.op, producto: p, cantidad: c, ubicacion: l, responsable: "JULIAN ACOSTA" })
+                });
+                alert("✅ Guardado en Excel y Local");
+            } catch (e) { alert("⚠️ Guardado solo local (Sin internet)"); }
 
             save();
-            ['m-prod','m-cant','m-uni','m-prov','m-oc','m-note'].forEach(i => document.getElementById(i).value = "");
-            alert("Registro guardado");
-        }
-
-        // --- 2. BODEGA (CON FILTROS Y BUSCADOR) ---
-        function filterShelf(zone) {
-            currentShelfFilter = zone;
-            document.querySelectorAll('#sec-shelf .chip').forEach(c => c.classList.remove('active'));
-            document.getElementById('f-shelf-' + zone.replace(/\s/g,'')).classList.add('active');
-            renderShelf();
+            document.getElementById('m-prod').value = ""; document.getElementById('m-cant').value = "";
         }
 
         function renderShelf() {
-            const search = document.getElementById('search-shelf').value.toUpperCase();
-            const container = document.getElementById('shelf-view');
-            
-            const filtered = db.productos.filter(p => {
-                const matchZone = currentShelfFilter === 'TODO' || p.loc === currentShelfFilter;
-                const matchName = p.nom.includes(search);
-                return matchZone && matchName && p.stk !== 0;
-            });
-
-            if(filtered.length === 0) {
-                container.innerHTML = '<p class="text-center opacity-30 mt-10">No hay productos en esta zona</p>';
-                return;
-            }
-
-            container.innerHTML = filtered.map(p => `
-                <div class="glass p-4 flex justify-between items-center border-l-4 ${p.stk < 5 ? 'border-red-500' : 'border-blue-500'}">
-                    <div>
-                        <h4 class="font-black text-sm uppercase">${p.nom}</h4>
-                        <p class="text-[10px] opacity-60 font-bold">${p.loc}</p>
-                    </div>
-                    <span class="text-2xl font-black">${p.stk}</span>
+            document.getElementById('shelf-list').innerHTML = db.prods.filter(x => x.q !== 0).map(x => `
+                <div class="glass p-4 flex justify-between border-l-4 ${x.q < 5 ? 'border-red-500' : 'border-blue-500'}">
+                    <div><b class="text-sm">${x.n}</b><p class="text-[10px] opacity-50">${x.l}</p></div>
+                    <b class="text-xl">${x.q}</b>
                 </div>
             `).join('');
         }
 
-        // --- 3. TAREAS ---
-        function addTask() {
-            const txt = document.getElementById('task-input').value;
-            if(!txt) return;
-            db.tasks.push({ id: Date.now(), txt, done: false });
-            document.getElementById('task-input').value = "";
-            save(); renderTasks();
-        }
-
-        function renderTasks() {
-            const search = document.getElementById('search-tasks').value.toLowerCase();
-            const list = document.getElementById('tasks-list');
-            
-            list.innerHTML = db.tasks
-                .filter(t => t.txt.toLowerCase().includes(search))
-                .sort((a,b) => a.done - b.done)
-                .map(t => `
-                <div class="glass p-3 flex items-center gap-3 ${t.done ? 'opacity-50' : ''}">
-                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})" class="w-5 h-5 accent-purple-600">
-                    <span class="flex-1 font-bold text-sm ${t.done ? 'line-through' : ''}">${t.txt}</span>
-                    <button onclick="delTask(${t.id})" class="text-red-500"><i data-lucide="trash-2" class="w-4"></i></button>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        function toggleTask(id) { const t = db.tasks.find(x => x.id === id); if(t) { t.done = !t.done; save(); renderTasks(); } }
-        function delTask(id) { db.tasks = db.tasks.filter(x => x.id !== id); save(); renderTasks(); }
-
-        // --- 4. ENVÍOS ---
-        function addEnvio() {
-            const dest = document.getElementById('e-dest').value;
-            const guia = document.getElementById('e-guia').value;
-            if(!dest) return;
-            db.envios.push({
-                id: Date.now(),
-                dest, guia,
-                trans: document.getElementById('e-trans').value,
-                status: 'PENDIENTE',
-                fecha: new Date().toLocaleDateString()
-            });
-            save(); renderEnvios();
-            document.getElementById('e-dest').value = "";
-            document.getElementById('e-guia').value = "";
-        }
-
-        function filterEnvios(st) { currentEnvioFilter = st; renderEnvios(); }
-
-        function renderEnvios() {
-            const search = document.getElementById('search-envios').value.toLowerCase();
-            const list = document.getElementById('envios-list');
-            
-            list.innerHTML = db.envios
-                .filter(e => (currentEnvioFilter === 'ALL' || e.status === currentEnvioFilter) && 
-                             (e.dest.toLowerCase().includes(search) || e.guia.toLowerCase().includes(search)))
-                .map(e => `
-                <div class="glass p-4 border-l-4 ${e.status === 'PENDIENTE' ? 'border-yellow-500' : (e.status === 'ENTREGADO' ? 'border-green-500' : 'border-blue-500')}">
-                    <div class="flex justify-between mb-2">
-                        <span class="font-black text-sm uppercase">${e.dest}</span>
-                        <span class="status-badge ${e.status === 'PENDIENTE' ? 'st-pending' : (e.status === 'ENTREGADO' ? 'st-done' : 'st-sent')}">${e.status}</span>
-                    </div>
-                    <div class="flex justify-between items-end">
-                        <div class="text-xs opacity-60">
-                            <p>Guía: ${e.guia || '---'}</p>
-                            <p>${e.trans || '---'}</p>
-                        </div>
-                        <button onclick="nextStatus(${e.id})" class="text-[10px] font-bold bg-zinc-800 text-white px-3 py-1 rounded-full">AVANZAR ESTADO</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function nextStatus(id) {
-            const e = db.envios.find(x => x.id === id);
-            if(e.status === 'PENDIENTE') e.status = 'EN_TRANSITO';
-            else if(e.status === 'EN_TRANSITO') e.status = 'ENTREGADO';
-            save(); renderEnvios();
-        }
-
-        // --- 5. DEVOLUCIONES ---
-        function addDevolucion() {
-            const prod = document.getElementById('d-prod').value.toUpperCase();
-            const cant = parseFloat(document.getElementById('d-cant').value);
-            const restock = document.getElementById('d-restock').checked;
-
-            if(!prod || isNaN(cant)) return alert("Faltan datos");
-
-            db.devoluciones.push({
-                prod, cant, 
-                motivo: document.getElementById('d-motivo').value,
-                fecha: new Date().toLocaleDateString(),
-                restock
-            });
-
-            if(restock) {
-                let p = db.productos.find(x => x.nom === prod);
-                if(p) p.stk += cant;
-                else db.productos.push({ nom: prod, stk: cant, loc: 'OFICINA' });
-                // Registrar movimiento de entrada por devolución
-                db.movs.push({ tipo: 'ENTRADA', prod, cant, loc: 'DEVOLUCION', fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString() });
-            }
-
-            save(); renderDevoluciones();
-            document.getElementById('d-prod').value = "";
-            document.getElementById('d-cant').value = "";
-            alert("Devolución registrada");
-        }
-
-        function renderDevoluciones() {
-            document.getElementById('devol-list').innerHTML = db.devoluciones.slice().reverse().map(d => `
-                <div class="glass p-3 flex justify-between items-center border-l-4 border-red-500">
-                    <div>
-                        <h4 class="font-bold text-sm uppercase">${d.prod}</h4>
-                        <p class="text-[10px] opacity-60">${d.fecha} • ${d.motivo}</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="font-black text-xl text-red-500">${d.cant}</span>
-                        ${d.restock ? '<span class="text-[8px] block font-bold text-green-500">RESTOCKED</span>' : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // --- 6. REMISIONES & FIRMA ---
-        function initSignature() { sigPad = new SignaturePad(document.getElementById('canvas-firma')); }
-        function abrirFirma() { 
-            document.getElementById('modal-firma').style.display = 'flex'; 
-            const canvas = document.getElementById('canvas-firma');
-            canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
-            sigPad.clear();
-        }
-        function guardarFirma() {
-            if(!sigPad.isEmpty()) {
-                document.getElementById('pv-sign-img').src = sigPad.toDataURL();
-                document.getElementById('pv-sign-img').classList.remove('hidden');
-            }
-            document.getElementById('modal-firma').style.display = 'none';
-        }
-        function addItemRem() {
-            const desc = document.getElementById('r-item').value;
+        function addItem() {
+            const n = document.getElementById('r-item').value;
             const q = document.getElementById('r-q').value;
-            if(desc && q) {
-                tempRem.push({desc, q});
+            if(n && q) {
+                itemsRem.push({n, q});
+                document.getElementById('remi-preview-list').innerHTML += `<p>• ${q}x ${n}</p>`;
                 document.getElementById('r-item').value = ""; document.getElementById('r-q').value = "";
-                updatePreview();
             }
         }
-        function updatePreview() {
-            document.getElementById('pv-cli').innerText = document.getElementById('r-cli').value || '---';
-            document.getElementById('pv-nit').innerText = document.getElementById('r-nit').value || '---';
-            document.getElementById('pv-num').innerText = Date.now().toString().slice(-4);
-            document.getElementById('pv-items').innerHTML = tempRem.map(i => `<tr class="border-b"><td class="p-2 font-bold">${i.q}</td><td class="p-2 uppercase">${i.desc}</td></tr>`).join('');
-        }
-        function saveRemision() {
-            if(tempRem.length === 0) return alert("Sin items");
-            const opt = { margin: 0, filename: `Remision_${Date.now()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } };
-            html2pdf().set(opt).from(document.getElementById('remi-sheet')).save();
-            db.remisiones.push({ cli: document.getElementById('r-cli').value, fecha: new Date().toLocaleDateString(), items: [...tempRem] });
-            save(); tempRem = []; updatePreview();
+
+        function abrirFirma() {
+            document.getElementById('modal-firma').style.display = 'flex';
+            const c = document.getElementById('canvas-firma');
+            c.width = window.innerWidth; c.height = window.innerHeight - 80;
+            sigPad = new SignaturePad(c);
         }
 
-        // --- 7. HISTORIAL ---
-        let histFilter = 'TODO';
-        function filterHist(f) { histFilter = f; renderHist(); }
-        function renderHist() {
-            const search = document.getElementById('search-hist').value.toUpperCase();
-            const list = document.getElementById('hist-list');
+        function cerrarFirma() { document.getElementById('modal-firma').style.display = 'none'; }
+
+        function generarPDFCarta() {
+            const cli = document.getElementById('r-cli').value;
+            if(!cli || itemsRem.length === 0) return alert("Datos incompletos");
+
+            document.getElementById('pdf-cli').innerText = cli;
+            document.getElementById('pdf-cli-sign').innerText = cli;
+            document.getElementById('pdf-doc').innerText = "NIT/CC: " + document.getElementById('r-doc').value;
+            document.getElementById('pdf-fecha').innerText = new Date().toLocaleDateString();
+            document.getElementById('pdf-num').innerText = "N° " + Date.now().toString().slice(-4);
             
-            // Unir Movimientos y Remisiones para mostrar todo
-            let data = [];
-            if(histFilter === 'REMISSION' || histFilter === 'TODO') {
-                data = data.concat(db.remisiones.map(r => ({...r, type: 'REMISSION'})));
-            }
-            if(histFilter !== 'REMISSION') {
-                data = data.concat(db.movs.filter(m => histFilter === 'TODO' || m.tipo === histFilter));
+            if(!sigPad.isEmpty()) {
+                document.getElementById('pdf-sign-img').src = sigPad.toDataURL();
+                document.getElementById('pdf-sign-img').style.display = 'block';
             }
 
-            // Ordenar por fecha (simulado) y filtrar por búsqueda
-            list.innerHTML = data.reverse().filter(i => {
-                if(i.type === 'REMISSION') return i.cli.toUpperCase().includes(search);
-                return i.prod.includes(search);
-            }).map(i => {
-                if(i.type === 'REMISSION') return `
-                    <div class="glass p-3 border-l-4 border-zinc-500">
-                        <p class="text-xs font-black text-blue-500">REMISIÓN</p>
-                        <p class="font-bold">${i.cli}</p>
-                        <p class="text-[10px] opacity-50">${i.fecha} • ${i.items.length} items</p>
-                    </div>`;
-                return `
-                    <div class="glass p-3 border-l-4 ${i.tipo === 'ENTRADA' ? 'border-green-500' : 'border-red-500'}">
-                        <div class="flex justify-between">
-                            <div>
-                                <p class="text-[9px] opacity-50 font-bold">${i.fecha} ${i.hora}</p>
-                                <h4 class="font-bold uppercase text-sm">${i.prod}</h4>
-                                <p class="text-[10px] italic">${i.loc}</p>
-                            </div>
-                            <span class="font-black text-lg ${i.tipo === 'ENTRADA' ? 'text-green-500' : 'text-red-500'}">
-                                ${i.tipo === 'ENTRADA' ? '+' : '-'}${i.cant}
-                            </span>
-                        </div>
-                    </div>`;
-            }).join('');
+            let rows = "";
+            itemsRem.forEach(i => {
+                rows += `<tr style="border-bottom: 2px solid #eee;"><td style="padding: 20px; border: 1px solid #eee;">${i.q}</td><td style="padding: 20px; border: 1px solid #eee; text-transform: uppercase;">${i.n}</td></tr>`;
+            });
+            document.getElementById('pdf-table-body').innerHTML = rows;
+
+            const element = document.getElementById('remi-final-sheet');
+            const opt = {
+                margin: 0,
+                filename: `Remision_${cli}.pdf`,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 3, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
         }
 
-        // --- 8. RÓTULOS ---
-        function addLabel() {
-            const l = { dest: document.getElementById('l-dest').value.toUpperCase(), cont: document.getElementById('l-cont').value, caja: document.getElementById('l-caja').value, total: document.getElementById('l-total').value, peso: document.getElementById('l-peso').value };
-            if(!l.dest) return;
-            db.labels.push(l); renderLabels();
-            document.getElementById('l-dest').value = "";
-        }
-        function renderLabels() {
-            document.getElementById('labels-container').innerHTML = db.labels.map(l => `
-                <div class="label-design">
-                    <div class="bg-black text-white text-center font-black p-2 mb-4">SAGA LOGISTICS</div>
-                    <p class="text-xs font-bold text-gray-500">DESTINATARIO:</p>
-                    <h1 class="text-4xl font-black mb-4 uppercase leading-none">${l.dest}</h1>
-                    <p class="text-xs font-bold text-gray-500">CONTENIDO:</p>
-                    <h2 class="text-xl font-bold mb-4 uppercase">${l.cont}</h2>
-                    <div class="flex border-t-2 border-black pt-2">
-                        <div class="flex-1"><p class="text-xs">CAJA</p><p class="text-2xl font-black">${l.caja}/${l.total}</p></div>
-                        <div class="flex-1 text-right"><p class="text-xs">PESO</p><p class="text-2xl font-black">${l.peso} KG</p></div>
-                    </div>
-                </div>
-            `).join('');
+        function exportDB() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "SAGA_BACKUP.json");
+            a.click();
         }
 
-        // --- 9. CALCULADORA ---
-        function cInput(v) { calcExp += v; document.getElementById('calc-hist').innerText = calcExp; }
-        function cAction(a) { if(a === 'C') { calcExp = ""; document.getElementById('calc-res').innerText = "0"; } else { calcExp = calcExp.slice(0, -1); } document.getElementById('calc-hist').innerText = calcExp; }
-        function cResult() { try { document.getElementById('calc-res').innerText = eval(calcExp); calcExp = eval(calcExp).toString(); } catch { document.getElementById('calc-res').innerText = "Error"; } }
-
-        // --- GLOBAL RENDER ---
-        function renderAll() {
-            document.getElementById('kpi-stock').innerText = db.productos.reduce((a,b)=>a+b.stk, 0);
-            document.getElementById('kpi-envios').innerText = db.envios.filter(e=>e.status!=='ENTREGADO').length;
-            document.getElementById('kpi-pend').innerText = db.tasks.filter(t=>!t.done).length;
-            document.getElementById('list-prods').innerHTML = db.productos.map(p => `<option value="${p.nom}">`).join('');
-            renderTasks();
-            renderEnvios();
+        function importDB(input) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                db = JSON.parse(e.target.result);
+                save();
+                location.reload();
+            };
+            reader.readAsText(input.files[0]);
         }
+
+        function cInput(v) { document.getElementById('calc-res').innerText += v; }
+        function cAction(a) { document.getElementById('calc-res').innerText = "0"; }
+        function cResult() { 
+            try { document.getElementById('calc-res').innerText = eval(document.getElementById('calc-res').innerText); } 
+            catch { document.getElementById('calc-res').innerText = "Error"; } 
+        }
+
+        function toggleTheme() { document.body.classList.toggle('light-mode'); lucide.createIcons(); }
+
+        window.onload = () => { renderShelf(); lucide.createIcons(); };
     </script>
 </body>
 </html>
