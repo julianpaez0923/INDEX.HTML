@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAGA MOBIL | v10</title>
+    <title>SAGA MOBIL | V15 SECURE</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -30,9 +30,7 @@
 
         /* Splash Screen */
         #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; items-center; transition: opacity 0.5s; }
-        .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: var(--accent); border-radius: 50%; display: inline-block; box-sizing: border-box; animation: rotation 1s linear infinite; margin-top: 20px;}
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
+        
         /* Dock Navigation Scrollable */
         .dock-container { position: fixed; bottom: 20px; left: 15px; right: 15px; z-index: 1000; }
         .dock { height: 75px; background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; display: flex; align-items: center; padding: 0 10px; overflow-x: auto; gap: 5px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); scrollbar-width: none; }
@@ -77,11 +75,10 @@
         <div class="text-center">
             <h1 class="text-6xl font-black italic text-blue-600 tracking-tighter mb-2">SAGA</h1>
             <p class="text-xs font-bold uppercase tracking-[6px] opacity-60 mb-8">Logistics Enterprise</p>
-            
             <button onclick="enterApp()" class="bg-white text-black px-8 py-3 rounded-full font-black text-sm hover:scale-105 transition shadow-lg flex items-center gap-2 mx-auto">
                 INGRESAR SISTEMA <i data-lucide="arrow-right" class="w-4"></i>
             </button>
-            <p class="text-[10px] mt-8 opacity-30">V14.0.2 Secure Build</p>
+            <p class="text-[10px] mt-8 opacity-30">V15.0 SECURE</p>
         </div>
     </section>
 
@@ -118,11 +115,25 @@
         <section id="sec-dash" class="page-content active">
             <header class="flex justify-between items-center mb-6">
                 <div>
-                    <h1 class="text-3xl font-black italic text-blue-600 tracking-tighter">SAGA <span class="text-zinc-500 font-light">V14</span></h1>
-                    <p class="text-[10px] font-bold uppercase tracking-[3px] opacity-60">Enterprise Edition</p>
+                    <h1 class="text-3xl font-black italic text-blue-600 tracking-tighter">SAGA <span class="text-zinc-500 font-light">V15</span></h1>
+                    <p class="text-[10px] font-bold uppercase tracking-[3px] opacity-60">Enterprise Secure</p>
                 </div>
                 <button onclick="toggleTheme()" class="w-10 h-10 glass flex items-center justify-center text-yellow-500"><i data-lucide="sun" id="theme-icon"></i></button>
             </header>
+
+            <div class="glass p-4 mb-6 border border-yellow-500/30">
+                <h3 class="text-[10px] font-black uppercase text-yellow-600 tracking-widest mb-3">ZONA DE SEGURIDAD DE DATOS</h3>
+                <div class="flex gap-2">
+                    <button onclick="exportData()" class="flex-1 py-3 bg-zinc-800 text-white rounded-xl font-bold text-[10px] flex flex-col items-center justify-center gap-1">
+                        <i data-lucide="save" class="w-4"></i> DESCARGAR COPIA
+                    </button>
+                    <button onclick="document.getElementById('file-input').click()" class="flex-1 py-3 bg-zinc-800 text-white rounded-xl font-bold text-[10px] flex flex-col items-center justify-center gap-1">
+                        <i data-lucide="upload" class="w-4"></i> RESTAURAR DATOS
+                    </button>
+                    <input type="file" id="file-input" class="hidden" accept=".json" onchange="importData(this)">
+                </div>
+                <p class="text-[9px] opacity-40 mt-2 text-center">Descarga tu copia semanalmente para evitar pérdida de datos.</p>
+            </div>
 
             <div class="grid grid-cols-3 gap-2 mb-6">
                 <div class="glass p-3 text-center border-b-4 border-blue-500">
@@ -165,18 +176,16 @@
                 </select>
                 <input type="text" id="m-note" placeholder="Observaciones" class="input-pro">
                 
-                <button onclick="registrar()" class="btn-action bg-zinc-900 text-white border border-zinc-700">GUARDAR</button>
+                <button onclick="registrar()" class="btn-action bg-zinc-900 text-white border border-zinc-700">GUARDAR REGISTRO</button>
             </div>
         </section>
 
         <section id="sec-shelf" class="page-content">
             <h2 class="text-2xl font-black mb-4 italic text-blue-600">Stock por Zonas</h2>
-            
             <div class="search-bar">
                 <i data-lucide="search"></i>
                 <input type="text" id="search-shelf" oninput="renderShelf()" placeholder="Buscar producto en bodega..." class="input-pro">
             </div>
-
             <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
                 <button onclick="filterShelf('TODO')" class="chip active" id="f-shelf-TODO">Todo</button>
                 <button onclick="filterShelf('PASILLO A')" class="chip" id="f-shelf-PASILLOA">Pasillo A</button>
@@ -184,29 +193,24 @@
                 <button onclick="filterShelf('PARQUEADERO')" class="chip" id="f-shelf-PARQUEADERO">Parqueadero</button>
                 <button onclick="filterShelf('OFICINA')" class="chip" id="f-shelf-OFICINA">Oficina</button>
             </div>
-
             <div id="shelf-view" class="space-y-4"></div>
         </section>
 
         <section id="sec-tasks" class="page-content">
             <h2 class="text-2xl font-black mb-4 italic text-purple-600">Tareas Pendientes</h2>
-            
             <div class="flex gap-2 mb-4">
                 <input type="text" id="task-input" placeholder="Nueva tarea..." class="input-pro">
                 <button onclick="addTask()" class="bg-purple-600 text-white rounded-xl w-14 font-black text-xl flex items-center justify-center">+</button>
             </div>
-
             <div class="search-bar">
                 <i data-lucide="search"></i>
                 <input type="text" id="search-tasks" oninput="renderTasks()" placeholder="Filtrar tareas..." class="input-pro">
             </div>
-
             <div id="tasks-list" class="space-y-2"></div>
         </section>
 
         <section id="sec-envios" class="page-content">
             <h2 class="text-2xl font-black mb-4 italic text-yellow-600">Gestión de Envíos</h2>
-
             <div class="glass p-4 mb-6">
                 <h3 class="text-[10px] font-black uppercase opacity-50 mb-2">Nuevo Envío</h3>
                 <input type="text" id="e-dest" placeholder="Destinatario" class="input-pro mb-2">
@@ -216,25 +220,21 @@
                 </div>
                 <button onclick="addEnvio()" class="btn-action bg-yellow-600 text-black">REGISTRAR ENVÍO</button>
             </div>
-
             <div class="flex gap-2 mb-4 overflow-x-auto">
                 <button onclick="filterEnvios('ALL')" class="chip active">Todos</button>
                 <button onclick="filterEnvios('PENDIENTE')" class="chip">Pendientes</button>
                 <button onclick="filterEnvios('EN_TRANSITO')" class="chip">En Tránsito</button>
                 <button onclick="filterEnvios('ENTREGADO')" class="chip">Entregados</button>
             </div>
-
             <div class="search-bar">
                 <i data-lucide="search"></i>
                 <input type="text" id="search-envios" oninput="renderEnvios()" placeholder="Buscar guía o destino..." class="input-pro">
             </div>
-
             <div id="envios-list" class="space-y-3"></div>
         </section>
 
         <section id="sec-devol" class="page-content">
             <h2 class="text-2xl font-black mb-4 italic text-red-600">Devoluciones</h2>
-
             <div class="glass p-4 mb-6 border-l-4 border-red-600">
                 <h3 class="text-[10px] font-black uppercase opacity-50 mb-2">Registrar Devolución</h3>
                 <input type="text" id="d-prod" placeholder="Producto Devuelto" class="input-pro mb-2" list="list-prods">
@@ -252,7 +252,6 @@
                 </div>
                 <button onclick="addDevolucion()" class="btn-action bg-red-600">PROCESAR DEVOLUCIÓN</button>
             </div>
-
             <div id="devol-list" class="space-y-3"></div>
         </section>
 
@@ -265,7 +264,6 @@
                         <input type="text" id="r-nit" placeholder="NIT / CC" class="input-pro" oninput="updatePreview()">
                         <input type="text" id="r-tel" placeholder="Teléfono" class="input-pro" oninput="updatePreview()">
                     </div>
-                    
                     <div class="p-3 bg-zinc-500/10 rounded-xl mt-4">
                         <div class="flex gap-2">
                             <input type="text" id="r-item" placeholder="Item" class="input-pro flex-[2]">
@@ -278,7 +276,6 @@
                     </button>
                 </div>
             </div>
-
             <div class="preview-wrapper">
                 <div id="remi-sheet" class="sheet-a4 relative">
                     <div class="flex justify-between border-b-4 border-blue-900 pb-4 mb-6">
@@ -366,7 +363,7 @@
 
     <script>
         // --- BASE DE DATOS Y ESTADO ---
-        const DB_KEY = 'SAGA_V14_DB';
+        const DB_KEY = 'SAGA_V15_DB';
         let db = JSON.parse(localStorage.getItem(DB_KEY)) || {
             productos: [],
             movs: [],
@@ -391,6 +388,8 @@
             initSignature();
             renderAll();
             lucide.createIcons();
+            // Auto-guardado de seguridad al iniciar
+            if(!localStorage.getItem(DB_KEY)) save(); 
         };
 
         function enterApp() {
@@ -403,6 +402,42 @@
         }
 
         const save = () => { localStorage.setItem(DB_KEY, JSON.stringify(db)); renderAll(); };
+
+        // --- SISTEMA DE COPIA DE SEGURIDAD (BACKUP) ---
+        function exportData() {
+            const dataStr = JSON.stringify(db);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'SAGA_BACKUP_'+ new Date().toLocaleDateString().replace(/\//g,'-') +'.json';
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const contenido = JSON.parse(e.target.result);
+                    // Verificación básica de que es un archivo válido
+                    if(contenido.productos && contenido.movs) {
+                        if(confirm("⚠️ ¿Estás seguro? Esto reemplazará los datos actuales con la copia de seguridad.")) {
+                            db = contenido;
+                            save();
+                            alert("✅ Datos restaurados correctamente.");
+                            location.reload();
+                        }
+                    } else {
+                        alert("❌ Archivo inválido o corrupto.");
+                    }
+                } catch(err) {
+                    alert("❌ Error al leer el archivo.");
+                }
+            };
+            reader.readAsText(file);
+        }
 
         // --- NAVEGACIÓN ---
         function nav(id) {
