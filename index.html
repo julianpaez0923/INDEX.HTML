@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAGA MOBIL | V15 ULTIMATE</title>
+    <title>SAGA MOBIL | V10</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --accent: #2563eb; --bg: #09090b; --card: #18181b; --text: #f4f4f5; --border: #27272a; --input: #09090b; }
@@ -17,15 +17,15 @@
         
         body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 110px; transition: 0.3s; }
         
-        .glass { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+        .glass { background: var(--card); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
         .input-pro { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 12px; width: 100%; outline: none; font-size: 14px; }
-        .btn-action { width: 100%; padding: 16px; background: var(--accent); color: white; border-radius: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action { width: 100%; padding: 18px; background: var(--accent); color: white; border-radius: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; }
         
         /* Dock Navigation */
         .dock-container { position: fixed; bottom: 20px; left: 15px; right: 15px; z-index: 1000; }
         .dock { height: 75px; background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; display: flex; align-items: center; padding: 0 10px; overflow-x: auto; gap: 5px; scrollbar-width: none; }
         .dock::-webkit-scrollbar { display: none; }
-        .dock-item { min-width: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; flex: 1; }
+        .dock-item { min-width: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; flex: 1; transition: 0.3s; }
         .dock-item.active { color: var(--accent); background: rgba(37, 99, 235, 0.1); border-radius: 15px; }
         .dock-item span { font-size: 8px; font-weight: 800; margin-top: 3px; text-transform: uppercase; }
 
@@ -33,7 +33,7 @@
         .page-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Estilos para PDF Tamaño Carta Real */
+        /* Estilos para PDF Tamaño Carta (Invisibles en la app) */
         #pdf-render-area { position: absolute; left: -9999px; top: 0; }
         .sheet-letter { 
             width: 216mm; 
@@ -44,6 +44,7 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            font-family: Arial, sans-serif;
         }
 
         /* Calc Grid */
@@ -57,49 +58,53 @@
         <nav class="dock">
             <div onclick="nav('dash')" class="dock-item active" id="n-dash"><i data-lucide="layout-grid"></i><span>Panel</span></div>
             <div onclick="nav('shelf')" class="dock-item" id="n-shelf"><i data-lucide="package"></i><span>Bodega</span></div>
-            <div onclick="nav('envios')" class="dock-item" id="n-envios"><i data-lucide="truck"></i><span>Envíos</span></div>
-            <div onclick="nav('remi')" class="dock-item" id="n-remi"><i data-lucide="file-text"></i><span>Remitir</span></div>
+            <div onclick="nav('remi')" class="dock-item" id="n-remi"><i data-lucide="file-check"></i><span>Remitir</span></div>
             <div onclick="nav('calc')" class="dock-item" id="n-calc"><i data-lucide="calculator"></i><span>Calc</span></div>
-            <div onclick="nav('config')" class="dock-item" id="n-config"><i data-lucide="settings"></i><span>Backup</span></div>
+            <div onclick="nav('config')" class="dock-item" id="n-config"><i data-lucide="shield-check"></i><span>Seguridad</span></div>
         </nav>
     </div>
 
     <div id="pdf-render-area">
         <div id="remi-final-sheet" class="sheet-letter">
-            <div style="display: flex; justify-content: space-between; border-bottom: 5px solid #1e40af; padding-bottom: 20px; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 6px solid #1e40af; padding-bottom: 25px; margin-bottom: 40px;">
                 <div>
-                    <h1 style="font-size: 48px; font-weight: 900; color: #1e40af; margin: 0; line-height: 1;">NICHOLL´S TACTICA</h1>
-                    <p style="letter-spacing: 6px; font-weight: bold; color: #666; font-size: 14px;">FUSAGASUGA - LOGISTICS</p>
+                    <h1 style="font-size: 50px; font-weight: 900; color: #1e40af; margin: 0;">SAGA LOGISTICS</h1>
+                    <p style="letter-spacing: 5px; font-weight: bold; color: #666; font-size: 14px; margin: 0;">NICHOLL´S TACTICA - COLOMBIA</p>
                 </div>
                 <div style="text-align: right;">
                     <h2 style="font-size: 28px; color: #999; margin: 0;">REMISIÓN</h2>
-                    <p style="font-size: 32px; font-weight: 900; color: black;" id="pdf-num">N° 0000</p>
-                    <p style="font-size: 18px; color: #2563eb; font-weight: bold;" id="pdf-fecha">00/00/0000</p>
+                    <p style="font-size: 35px; font-weight: 900; color: black; margin: 0;" id="pdf-num">N° 0000</p>
+                    <p style="font-size: 18px; color: #2563eb; font-weight: bold;" id="pdf-fecha">01/01/2024</p>
                 </div>
             </div>
-            <div style="margin-bottom: 40px; background: #f8fafc; padding: 20px; border-radius: 10px;">
-                <p style="font-size: 12px; font-weight: bold; color: #2563eb; margin: 0;">CLIENTE / DESTINATARIO:</p>
-                <h3 style="font-size: 38px; font-weight: 900; margin: 5px 0; text-transform: uppercase;" id="pdf-cli">---</h3>
-                <p style="font-size: 20px; font-weight: bold; color: #666;" id="pdf-doc">NIT: ---</p>
+
+            <div style="margin-bottom: 40px; background: #f1f5f9; padding: 25px; border-radius: 15px;">
+                <p style="font-size: 12px; font-weight: bold; color: #2563eb; margin: 0; text-transform: uppercase;">Cliente / Destinatario:</p>
+                <h3 style="font-size: 40px; font-weight: 900; margin: 5px 0; text-transform: uppercase;" id="pdf-cli">---</h3>
+                <p style="font-size: 20px; font-weight: bold; color: #475569;" id="pdf-doc">NIT/CC: ---</p>
             </div>
+
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 50px;">
                 <thead>
-                    <tr style="background: #1e40af; color: white; font-size: 18px;">
-                        <th style="padding: 15px; text-align: left; width: 120px; border: 1px solid #1e40af;">CANT.</th>
-                        <th style="padding: 15px; text-align: left; border: 1px solid #1e40af;">DESCRIPCIÓN</th>
+                    <tr style="background: #1e40af; color: white; font-size: 20px;">
+                        <th style="padding: 20px; text-align: left; width: 120px; border: 1px solid #1e40af;">CANT.</th>
+                        <th style="padding: 20px; text-align: left; border: 1px solid #1e40af;">DESCRIPCIÓN DE PRODUCTOS</th>
                     </tr>
                 </thead>
-                <tbody id="pdf-table-body" style="font-size: 20px; font-weight: 600; color: #333;"></tbody>
+                <tbody id="pdf-table-body" style="font-size: 22px; font-weight: bold; color: #1e293b;">
+                    </tbody>
             </table>
-            <div style="margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding-bottom: 60px;">
-                <div style="border-top: 2px solid #ccc; padding-top: 15px;">
-                    <p style="font-size: 11px; font-weight: bold; color: #999;">DESPACHADO POR:</p>
-                    <p style="font-size: 22px; font-weight: 900;">JULIAN ACOSTA</p>
+
+            <div style="margin-top: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; padding-bottom: 80px;">
+                <div style="border-top: 2px solid #cbd5e1; padding-top: 20px;">
+                    <p style="font-size: 12px; font-weight: bold; color: #94a3b8;">DESPACHADO POR:</p>
+                    <p style="font-size: 24px; font-weight: 900;">JULIAN ACOSTA</p>
+                    <p style="font-size: 12px; color: #94a3b8;">Logística SAGA</p>
                 </div>
-                <div style="border-top: 2px solid black; padding-top: 15px; position: relative;">
-                    <p style="font-size: 11px; font-weight: bold; color: #999;">RECIBIDO CONFORME:</p>
-                    <img id="pdf-sign-img" style="height: 120px; position: absolute; top: -100px; left: 30px; display: none;">
-                    <p style="font-size: 22px; font-weight: 900; text-transform: uppercase;" id="pdf-cli-sign">---</p>
+                <div style="border-top: 3px solid black; padding-top: 20px; position: relative;">
+                    <p style="font-size: 12px; font-weight: bold; color: #94a3b8;">RECIBIDO POR (Firma y Nombre):</p>
+                    <img id="pdf-sign-img" style="height: 130px; position: absolute; top: -110px; left: 40px; display: none;">
+                    <p style="font-size: 24px; font-weight: 900; text-transform: uppercase; margin-top: 10px;" id="pdf-cli-sign">---</p>
                 </div>
             </div>
         </div>
@@ -108,63 +113,67 @@
     <main id="app">
         <section id="sec-dash" class="page-content active">
             <header class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-black italic text-blue-600">SAGA V15</h1>
-                <button onclick="toggleTheme()" class="w-10 h-10 glass flex items-center justify-center text-yellow-500"><i data-lucide="sun"></i></button>
+                <div>
+                    <h1 class="text-3xl font-black italic text-blue-600">SAGA V15</h1>
+                    <p class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Enterprise Cloud</p>
+                </div>
+                <button onclick="toggleTheme()" class="w-12 h-12 glass flex items-center justify-center text-yellow-500 shadow-lg">
+                    <i data-lucide="sun" id="theme-icon"></i>
+                </button>
             </header>
             
-            <div class="glass p-5 space-y-4 mb-6">
+            <div class="glass p-6 space-y-4 shadow-xl">
+                <h3 class="text-xs font-black text-blue-500 uppercase">Registro de Movimiento</h3>
                 <div class="flex p-1 bg-zinc-800/10 rounded-xl">
-                    <button id="btn-ent" onclick="setOp('ENTRADA')" class="flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs">ENTRADA</button>
-                    <button id="btn-sal" onclick="setOp('SALIDA')" class="flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs">SALIDA</button>
+                    <button id="btn-ent" onclick="setOp('ENTRADA')" class="flex-1 py-3 rounded-lg bg-blue-600 text-white font-black text-xs transition-all">ENTRADA</button>
+                    <button id="btn-sal" onclick="setOp('SALIDA')" class="flex-1 py-3 rounded-lg text-zinc-500 font-black text-xs transition-all">SALIDA</button>
                 </div>
-                <input type="text" id="m-prod" placeholder="Producto" class="input-pro">
+                <input type="text" id="m-prod" placeholder="Nombre del Producto" class="input-pro uppercase">
                 <input type="number" id="m-cant" placeholder="Cantidad" class="input-pro">
                 <select id="m-loc" class="input-pro">
                     <option value="PASILLO A">PASILLO A</option>
                     <option value="PASILLO B">PASILLO B</option>
                     <option value="PARQUEADERO">PARQUEADERO</option>
+                    <option value="OFICINA">OFICINA</option>
                 </select>
-                <button onclick="registrarCloud()" class="btn-action">GUARDAR EN CLOUD (EXCEL)</button>
+                <button onclick="registrarCloud()" class="btn-action shadow-blue-500/20 shadow-lg">
+                    <i data-lucide="cloud-upload" class="w-5"></i> GUARDAR EN EXCEL
+                </button>
             </div>
         </section>
 
         <section id="sec-shelf" class="page-content">
-            <h2 class="text-2xl font-black mb-4">Stock en Bodega</h2>
+            <h2 class="text-2xl font-black mb-6 flex items-center gap-2"><i data-lucide="box"></i> Inventario Local</h2>
             <div id="shelf-list" class="space-y-3"></div>
         </section>
 
         <section id="sec-remi" class="page-content">
-            <h2 class="text-2xl font-black mb-4">Generar Remisión</h2>
-            <div class="glass p-5 space-y-3 mb-4">
-                <input type="text" id="r-cli" placeholder="Nombre del Cliente" class="input-pro">
-                <input type="text" id="r-doc" placeholder="NIT / Cédula" class="input-pro">
-                <div class="flex gap-2">
-                    <input type="text" id="r-item" placeholder="Producto" class="input-pro">
-                    <input type="number" id="r-q" placeholder="Cant" class="input-pro w-20">
-                    <button onclick="addItem()" class="bg-blue-600 text-white w-12 rounded-xl font-bold">+</button>
+            <h2 class="text-2xl font-black mb-6">Crear Remisión</h2>
+            <div class="glass p-6 space-y-4 shadow-xl mb-6">
+                <input type="text" id="r-cli" placeholder="Cliente / Empresa" class="input-pro uppercase">
+                <input type="text" id="r-doc" placeholder="NIT o CC" class="input-pro">
+                <div class="flex gap-2 p-3 bg-blue-500/5 rounded-2xl border border-blue-500/10">
+                    <input type="text" id="r-item" placeholder="Producto" class="input-pro flex-1">
+                    <input type="number" id="r-q" placeholder="#" class="input-pro w-20">
+                    <button onclick="addItem()" class="bg-blue-600 text-white w-14 rounded-xl font-black text-xl">+</button>
                 </div>
-                <button onclick="abrirFirma()" class="w-full py-3 bg-zinc-200 text-black rounded-xl font-bold text-xs">FIRMAR RECEPTOR</button>
-                <button onclick="generarPDFCarta()" class="btn-action bg-green-600">DESCARGAR HOJA CARTA PDF</button>
+                <div id="remi-preview-list" class="text-[11px] font-bold space-y-1 py-2 border-y border-zinc-500/10"></div>
+                <button onclick="abrirFirma()" class="w-full py-4 bg-zinc-200 text-black rounded-xl font-bold text-xs flex items-center justify-center gap-2">
+                    <i data-lucide="pen-tool" class="w-4"></i> FIRMAR RECIBIDO
+                </button>
+                <button onclick="generarPDFCarta()" class="btn-action bg-emerald-600">
+                    <i data-lucide="file-down" class="w-5"></i> GENERAR HOJA CARTA PDF
+                </button>
             </div>
-            <div id="remi-preview-list" class="text-xs space-y-1 opacity-60"></div>
         </section>
 
-        <section id="sec-config" class="page-content">
-            <h2 class="text-2xl font-black mb-4">Seguridad de Datos</h2>
-            <div class="glass p-5 space-y-4">
-                <button onclick="exportDB()" class="btn-action bg-zinc-800 text-white">💾 DESCARGAR COPIA DE SEGURIDAD</button>
-                <input type="file" id="import-file" class="hidden" onchange="importDB(this)">
-                <button onclick="document.getElementById('import-file').click()" class="btn-action bg-zinc-800 text-white">📂 RESTAURAR DATOS</button>
-            </div>
-        </section>
-        
         <section id="sec-calc" class="page-content">
-            <h2 class="text-2xl font-black mb-4">Calculadora</h2>
-            <div class="glass p-6">
-                <div id="calc-res" class="text-4xl font-black text-right mb-4 p-4 bg-black/5 rounded-xl">0</div>
+            <h2 class="text-2xl font-black mb-6">Calculadora</h2>
+            <div class="glass p-6 shadow-2xl">
+                <div id="calc-res" class="text-5xl font-black text-right mb-6 p-6 bg-black/10 rounded-2xl font-mono truncate">0</div>
                 <div class="calc-grid">
-                    <button class="btn-calc text-red-500" onclick="cAction('C')">C</button>
-                    <button class="btn-calc" onclick="cInput('/')">/</button>
+                    <button class="btn-calc text-red-500 bg-red-500/5" onclick="cAction('C')">C</button>
+                    <button class="btn-calc" onclick="cInput('/')">÷</button>
                     <button class="btn-calc" onclick="cInput('*')">×</button>
                     <button class="btn-calc" onclick="cInput('-')">-</button>
                     <button class="btn-calc" onclick="cInput('7')">7</button>
@@ -174,28 +183,56 @@
                     <button class="btn-calc" onclick="cInput('4')">4</button>
                     <button class="btn-calc" onclick="cInput('5')">5</button>
                     <button class="btn-calc" onclick="cInput('6')">6</button>
-                    <button class="btn-calc bg-blue-600 text-white" onclick="cResult()">=</button>
+                    <button class="btn-calc bg-blue-600 text-white border-none row-span-2" onclick="cResult()">=</button>
+                    <button class="btn-calc" onclick="cInput('1')">1</button>
+                    <button class="btn-calc" onclick="cInput('2')">2</button>
+                    <button class="btn-calc" onclick="cInput('3')">3</button>
                 </div>
+            </div>
+        </section>
+
+        <section id="sec-config" class="page-content">
+            <h2 class="text-2xl font-black mb-6">Centro de Seguridad</h2>
+            <div class="glass p-6 space-y-4">
+                <div class="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl mb-4">
+                    <p class="text-[10px] font-black text-yellow-600 uppercase">Recomendación</p>
+                    <p class="text-xs opacity-70">Descarga una copia de seguridad cada viernes para proteger tus datos contra borrados de historial.</p>
+                </div>
+                <button onclick="exportDB()" class="btn-action bg-zinc-800 text-white">
+                    <i data-lucide="download" class="w-5"></i> DESCARGAR COPIA (.JSON)
+                </button>
+                <input type="file" id="import-file" class="hidden" onchange="importDB(this)">
+                <button onclick="document.getElementById('import-file').click()" class="btn-action bg-zinc-800 text-white">
+                    <i data-lucide="upload" class="w-5"></i> RESTAURAR COPIA
+                </button>
             </div>
         </section>
     </main>
 
     <div id="modal-firma" class="fixed inset-0 bg-white z-[3000] hidden flex-col">
-        <div class="p-4 bg-black text-white flex justify-between">
-            <button onclick="sigPad.clear()" class="font-bold">BORRAR</button>
-            <button onclick="cerrarFirma()" class="bg-blue-600 px-4 py-1 rounded">GUARDAR</button>
+        <div class="p-4 bg-zinc-900 text-white flex justify-between items-center shadow-lg">
+            <button onclick="sigPad.clear()" class="font-black text-red-400">BORRAR</button>
+            <span class="font-black text-xs uppercase tracking-widest">Firma Digital Receptor</span>
+            <button onclick="cerrarFirma()" class="bg-blue-600 px-6 py-2 rounded-xl font-black">GUARDAR</button>
         </div>
-        <canvas id="canvas-firma" class="flex-1 bg-gray-100"></canvas>
+        <canvas id="canvas-firma" class="flex-1 bg-zinc-50"></canvas>
     </div>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('SAGA_DB')) || { prods: [], movs: [], op: 'ENTRADA' };
+        // --- BASE DE DATOS Y CONFIG ---
+        let db = JSON.parse(localStorage.getItem('SAGA_DB_V15')) || { prods: [], movs: [], op: 'ENTRADA' };
         let itemsRem = [];
         let sigPad;
-        const SHEETS_URL = "TU_URL_DE_APPS_SCRIPT"; // REEMPLAZAR CON TU URL
+        
+        // IMPORTANTE: Pon aquí tu URL de Google Apps Script
+        const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyIqlxTKk-EXAMPLE/exec"; 
 
-        function save() { localStorage.setItem('SAGA_DB', JSON.stringify(db)); renderShelf(); }
+        function save() { 
+            localStorage.setItem('SAGA_DB_V15', JSON.stringify(db)); 
+            renderShelf(); 
+        }
 
+        // --- NAVEGACIÓN ---
         function nav(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.dock-item').forEach(p => p.classList.remove('active'));
@@ -206,20 +243,26 @@
 
         function setOp(op) {
             db.op = op;
-            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
-            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-2 rounded-lg bg-red-600 text-white font-black text-xs" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
+            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-3 rounded-lg bg-blue-600 text-white font-black text-xs" : "flex-1 py-3 rounded-lg text-zinc-500 font-black text-xs";
+            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-3 rounded-lg bg-red-600 text-white font-black text-xs" : "flex-1 py-3 rounded-lg text-zinc-500 font-black text-xs";
         }
 
+        // --- REGISTRO Y BODEGA ---
         async function registrarCloud() {
-            const p = document.getElementById('m-prod').value.toUpperCase();
-            const c = parseFloat(document.getElementById('m-cant').value);
+            const prodInput = document.getElementById('m-prod');
+            const cantInput = document.getElementById('m-cant');
+            const p = prodInput.value.toUpperCase().trim();
+            const c = parseFloat(cantInput.value);
             const l = document.getElementById('m-loc').value;
 
-            if(!p || isNaN(c)) return alert("Faltan datos");
+            if(!p || isNaN(c)) return alert("⚠️ Por favor ingresa producto y cantidad.");
 
-            // Actualizar DB local
+            // Actualizar Inventario Local
             let item = db.prods.find(x => x.n === p);
-            if(!item) { item = { n: p, q: 0, l: l }; db.prods.push(item); }
+            if(!item) { 
+                item = { n: p, q: 0, l: l }; 
+                db.prods.push(item); 
+            }
             item.q += (db.op === 'ENTRADA' ? c : -c);
             item.l = l;
             
@@ -228,103 +271,165 @@
                 fetch(SHEETS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: JSON.stringify({ tipo: db.op, producto: p, cantidad: c, ubicacion: l, responsable: "JULIAN ACOSTA" })
+                    body: JSON.stringify({ 
+                        tipo: db.op, 
+                        producto: p, 
+                        cantidad: c, 
+                        ubicacion: l, 
+                        responsable: "JULIAN ACOSTA" 
+                    })
                 });
-                alert("✅ Guardado en Excel y Local");
-            } catch (e) { alert("⚠️ Guardado solo local (Sin internet)"); }
+                alert("✅ Registrado en Excel y Localmente.");
+            } catch (e) { 
+                alert("⚠️ Guardado localmente (Sin internet para Excel)."); 
+            }
 
             save();
-            document.getElementById('m-prod').value = ""; document.getElementById('m-cant').value = "";
+            prodInput.value = ""; 
+            cantInput.value = "";
         }
 
         function renderShelf() {
-            document.getElementById('shelf-list').innerHTML = db.prods.filter(x => x.q !== 0).map(x => `
-                <div class="glass p-4 flex justify-between border-l-4 ${x.q < 5 ? 'border-red-500' : 'border-blue-500'}">
-                    <div><b class="text-sm">${x.n}</b><p class="text-[10px] opacity-50">${x.l}</p></div>
-                    <b class="text-xl">${x.q}</b>
+            const list = document.getElementById('shelf-list');
+            if(db.prods.length === 0) {
+                list.innerHTML = '<p class="text-center py-10 opacity-30 text-xs">No hay productos registrados</p>';
+                return;
+            }
+            list.innerHTML = db.prods.filter(x => x.q !== 0).map(x => `
+                <div class="glass p-4 flex justify-between items-center border-l-8 ${x.q < 5 ? 'border-red-500' : 'border-blue-500'} shadow-sm">
+                    <div>
+                        <b class="text-sm uppercase">${x.n}</b>
+                        <p class="text-[10px] font-bold opacity-50"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${x.l}</p>
+                    </div>
+                    <div class="text-right">
+                        <b class="text-2xl">${x.q}</b>
+                        <p class="text-[8px] font-black opacity-30">UNIDADES</p>
+                    </div>
                 </div>
             `).join('');
+            lucide.createIcons();
         }
 
+        // --- REMISIÓN Y PDF ---
         function addItem() {
-            const n = document.getElementById('r-item').value;
+            const n = document.getElementById('r-item').value.toUpperCase();
             const q = document.getElementById('r-q').value;
             if(n && q) {
                 itemsRem.push({n, q});
-                document.getElementById('remi-preview-list').innerHTML += `<p>• ${q}x ${n}</p>`;
-                document.getElementById('r-item').value = ""; document.getElementById('r-q').value = "";
+                document.getElementById('remi-preview-list').innerHTML += `<p class="flex justify-between"><span>${n}</span> <span>x${q}</span></p>`;
+                document.getElementById('r-item').value = ""; 
+                document.getElementById('r-q').value = "";
             }
         }
 
         function abrirFirma() {
             document.getElementById('modal-firma').style.display = 'flex';
-            const c = document.getElementById('canvas-firma');
-            c.width = window.innerWidth; c.height = window.innerHeight - 80;
-            sigPad = new SignaturePad(c);
+            const canvas = document.getElementById('canvas-firma');
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight - 80;
+            sigPad = new SignaturePad(canvas, { penColor: "rgb(0, 0, 0)" });
         }
 
-        function cerrarFirma() { document.getElementById('modal-firma').style.display = 'none'; }
+        function cerrarFirma() { 
+            document.getElementById('modal-firma').style.display = 'none'; 
+            if(!sigPad.isEmpty()) alert("Firma capturada correctamente.");
+        }
 
         function generarPDFCarta() {
             const cli = document.getElementById('r-cli').value;
-            if(!cli || itemsRem.length === 0) return alert("Datos incompletos");
+            if(!cli || itemsRem.length === 0) return alert("⚠️ Faltan datos o productos en la lista.");
 
+            // Llenar datos en el template de la hoja carta
             document.getElementById('pdf-cli').innerText = cli;
             document.getElementById('pdf-cli-sign').innerText = cli;
-            document.getElementById('pdf-doc').innerText = "NIT/CC: " + document.getElementById('r-doc').value;
+            document.getElementById('pdf-doc').innerText = "NIT/CC: " + (document.getElementById('r-doc').value || "S/N");
             document.getElementById('pdf-fecha').innerText = new Date().toLocaleDateString();
-            document.getElementById('pdf-num').innerText = "N° " + Date.now().toString().slice(-4);
+            document.getElementById('pdf-num').innerText = "N° " + Math.floor(Math.random() * 9000 + 1000);
             
-            if(!sigPad.isEmpty()) {
+            if(!sigPad || sigPad.isEmpty()) {
+                alert("⚠️ No has incluido la firma del receptor.");
+            } else {
                 document.getElementById('pdf-sign-img').src = sigPad.toDataURL();
                 document.getElementById('pdf-sign-img').style.display = 'block';
             }
 
             let rows = "";
             itemsRem.forEach(i => {
-                rows += `<tr style="border-bottom: 2px solid #eee;"><td style="padding: 20px; border: 1px solid #eee;">${i.q}</td><td style="padding: 20px; border: 1px solid #eee; text-transform: uppercase;">${i.n}</td></tr>`;
+                rows += `<tr style="border-bottom: 2px solid #e2e8f0;">
+                    <td style="padding: 20px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">${i.q}</td>
+                    <td style="padding: 20px; border-right: 1px solid #e2e8f0; text-transform: uppercase;">${i.n}</td>
+                </tr>`;
             });
             document.getElementById('pdf-table-body').innerHTML = rows;
 
+            // Motor de generación PDF
             const element = document.getElementById('remi-final-sheet');
             const opt = {
                 margin: 0,
-                filename: `Remision_${cli}.pdf`,
+                filename: `SAGA_Remision_${cli}.pdf`,
                 image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 3, useCORS: true },
+                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
                 jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
             };
-            html2pdf().set(opt).from(element).save();
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Limpiar después de descargar
+                itemsRem = [];
+                document.getElementById('remi-preview-list').innerHTML = "";
+                document.getElementById('r-cli').value = "";
+            });
         }
 
+        // --- BACKUP Y CALCULADORA ---
         function exportDB() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
-            a.setAttribute("download", "SAGA_BACKUP.json");
-            a.click();
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `SAGA_DATA_${new Date().toLocaleDateString()}.json`);
+            dlAnchorElem.click();
         }
 
         function importDB(input) {
             const reader = new FileReader();
             reader.onload = e => {
-                db = JSON.parse(e.target.result);
-                save();
-                location.reload();
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if(imported.prods) {
+                        db = imported;
+                        save();
+                        alert("✅ Datos restaurados con éxito.");
+                        location.reload();
+                    }
+                } catch(err) { alert("❌ Archivo no válido."); }
             };
             reader.readAsText(input.files[0]);
         }
 
-        function cInput(v) { document.getElementById('calc-res').innerText += v; }
+        function cInput(v) { 
+            const res = document.getElementById('calc-res');
+            if(res.innerText === "0") res.innerText = v;
+            else res.innerText += v;
+        }
         function cAction(a) { document.getElementById('calc-res').innerText = "0"; }
         function cResult() { 
-            try { document.getElementById('calc-res').innerText = eval(document.getElementById('calc-res').innerText); } 
-            catch { document.getElementById('calc-res').innerText = "Error"; } 
+            try { 
+                document.getElementById('calc-res').innerText = eval(document.getElementById('calc-res').innerText); 
+            } catch { 
+                document.getElementById('calc-res').innerText = "Error"; 
+            } 
         }
 
-        function toggleTheme() { document.body.classList.toggle('light-mode'); lucide.createIcons(); }
+        function toggleTheme() { 
+            document.body.classList.toggle('light-mode'); 
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('theme-icon').setAttribute('data-lucide', isLight ? 'moon' : 'sun');
+            lucide.createIcons(); 
+        }
 
-        window.onload = () => { renderShelf(); lucide.createIcons(); };
+        window.onload = () => { 
+            renderShelf(); 
+            lucide.createIcons(); 
+        };
     </script>
 </body>
 </html>
