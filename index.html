@@ -3,79 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAGA MOBIL V10</title>
+    <title>SAGA MOBIL | V10</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://apis.google.com/js/api.js" async defer></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --accent: #2563eb; --bg: #09090b; --card: #18181b; --text: #f4f4f5; --border: #27272a; --input: #09090b; }
-        .light-mode { --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --border: #e2e8f0; --input: #f1f5f9; }
+        :root { --accent: #2563eb; --bg: #09090b; --card: #18181b; --text: #f4f4f5; --border: #27272a; --input: #000000; }
         
         body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 110px; -webkit-tap-highlight-color: transparent; transition: 0.3s; overflow-x: hidden; }
         
-        /* UI Kit & Utility */
         .glass { background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: 0.3s; position: relative; overflow: hidden; }
-        .input-pro { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 12px; width: 100%; outline: none; font-size: 14px; font-weight: 500; transition: 0.2s; }
+        .input-pro { background: var(--input); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 12px; width: 100%; outline: none; font-size: 13px; font-weight: 500; transition: 0.2s; }
         .input-pro:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
-        .btn-action { width: 100%; padding: 16px; background: var(--accent); color: white; border-radius: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-action:active { transform: scale(0.98); opacity: 0.9; }
-        .search-bar { position: relative; margin-bottom: 15px; }
-        .search-bar i { position: absolute; left: 14px; top: 14px; color: #71717a; width: 18px; }
-        .search-bar input { padding-left: 40px; }
-
-        /* Splash Screen */
-        #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; items-center; transition: opacity 0.5s; }
+        .btn-action { width: 100%; padding: 16px; background: var(--accent); color: white; border-radius: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border:none; }
         
-        /* Dock Navigation */
+        #splash-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s; }
+        
         .dock-container { position: fixed; bottom: 20px; left: 15px; right: 15px; z-index: 1000; }
         .dock { height: 75px; background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 25px; display: flex; align-items: center; padding: 0 10px; overflow-x: auto; gap: 5px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); scrollbar-width: none; }
-        .light-mode .dock { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.05); }
-        .dock::-webkit-scrollbar { display: none; }
         .dock-item { min-width: 65px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #71717a; transition: 0.3s; cursor: pointer; height: 100%; border-radius: 15px; }
         .dock-item.active { color: var(--accent); background: rgba(37, 99, 235, 0.1); }
         .dock-item span { font-size: 8px; font-weight: 800; margin-top: 3px; text-transform: uppercase; }
 
-        /* Page Transitions */
         .page-content { display: none; padding: 20px; animation: fadeIn 0.3s ease; padding-bottom: 120px; }
         .page-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* PDF Preview & Labels (TAMAÑO CARTA MODIFICADO) */
         .preview-wrapper { width: 100%; overflow-x: auto; background: #333; padding: 20px; border-radius: 15px; display: flex; justify-content: center; margin-bottom: 20px; }
+        .sheet-a4 { width: 210mm; min-height: 297mm; background: white; color: black; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.5); transform-origin: top center; transform: scale(0.40); margin-bottom: -160mm; }
         
-        /* HOJA CARTA: 216mm x 279mm */
-        .sheet-letter { 
-            width: 216mm; 
-            min-height: 279mm; 
-            background: white; 
-            color: black; 
-            padding: 20mm; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.5); 
-            transform-origin: top center; 
-            transform: scale(0.36); /* Ajustado para ver completo en celular */
-            margin-bottom: -180mm; 
-            position: relative;
-        }
-
-        .label-design { background: white; color: black; border: 4px solid black; padding: 20px; page-break-inside: avoid; margin-bottom: 20px; position: relative; }
+        .label-design { background: white; color: black; border: 4px solid black; padding: 25px; page-break-inside: avoid; margin-bottom: 20px; position: relative; width: 100%; max-width: 500px; }
         
-        /* Badges & Chips */
-        .chip { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; border: 1px solid var(--border); background: var(--card); color: var(--text); white-space: nowrap; }
-        .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
-        .st-sent { background: #3b82f6; color: white; }
-        .st-pending { background: #eab308; color: black; }
-        .st-done { background: #22c55e; color: white; }
-
-        /* Calculadora Grid */
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .btn-calc { background: var(--input); padding: 18px 0; border-radius: 12px; font-size: 1.4rem; font-weight: 700; color: var(--text); border: 1px solid var(--border); }
 
@@ -83,9 +45,6 @@
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
             #print-area { position: absolute; left: 0; top: 0; width: 100%; }
-            
-            /* Ajuste para impresión correcta */
-            .sheet-letter { transform: none; margin: 0; box-shadow: none; width: 100%; height: 100%; }
         }
     </style>
 </head>
@@ -96,9 +55,8 @@
             <h1 class="text-6xl font-black italic text-blue-600 tracking-tighter mb-2">SAGA MOBIL</h1>
             <p class="text-xs font-bold uppercase tracking-[6px] opacity-60 mb-8">EN NICHOLL´S TACTICA S.A.S</p>
             <button onclick="enterApp()" class="bg-white text-black px-8 py-3 rounded-full font-black text-sm hover:scale-105 transition shadow-lg flex items-center gap-2 mx-auto">
-                INGRESAR SISTEMA <i data-lucide="arrow-right" class="w-4"></i>
+                ABRIR SISTEMA <i data-lucide="arrow-right" class="w-4"></i>
             </button>
-            <p class="text-[10px] mt-8 opacity-30">Version 10.5 (Carta + Drive)</p>
         </div>
     </section>
 
@@ -106,12 +64,10 @@
         <nav class="dock">
             <div onclick="nav('dash')" class="dock-item active" id="n-dash"><i data-lucide="layout-grid"></i><span>Panel</span></div>
             <div onclick="nav('shelf')" class="dock-item" id="n-shelf"><i data-lucide="package"></i><span>Bodega</span></div>
-            <div onclick="nav('tasks')" class="dock-item" id="n-tasks"><i data-lucide="check-square"></i><span>Tareas</span></div>
-            <div onclick="nav('envios')" class="dock-item" id="n-envios"><i data-lucide="truck"></i><span>Envíos</span></div>
-            <div onclick="nav('devol')" class="dock-item" id="n-devol"><i data-lucide="rotate-ccw"></i><span>Devol.</span></div>
             <div onclick="nav('remi')" class="dock-item" id="n-remi"><i data-lucide="file-text"></i><span>Remisión</span></div>
-            <div onclick="nav('hist')" class="dock-item" id="n-hist"><i data-lucide="history"></i><span>Historial</span></div>
             <div onclick="nav('label')" class="dock-item" id="n-label"><i data-lucide="tag"></i><span>Rótulos</span></div>
+            <div onclick="nav('hist')" class="dock-item" id="n-hist"><i data-lucide="history"></i><span>Historial</span></div>
+            <div onclick="nav('tasks')" class="dock-item" id="n-tasks"><i data-lucide="check-square"></i><span>Tareas</span></div>
             <div onclick="nav('calc')" class="dock-item" id="n-calc"><i data-lucide="calculator"></i><span>Calc</span></div>
         </nav>
     </div>
@@ -135,209 +91,185 @@
         <section id="sec-dash" class="page-content active">
             <header class="flex justify-between items-center mb-6">
                 <div>
-                    <h1 class="text-3xl font-black italic text-blue-600 tracking-tighter">SAGA MOBIL <span class="text-zinc-500 font-light">V10</span></h1>
-                    <p class="text-[10px] font-bold uppercase tracking-[3px] opacity-60">COLOMBIA </p>
+                    <h1 class="text-3xl font-black italic text-blue-600 tracking-tighter">SAGA <span class="text-zinc-500 font-light">V15</span></h1>
+                    <p class="text-[10px] font-bold uppercase tracking-[3px] opacity-60">Control de Inventario</p>
                 </div>
-                <button onclick="toggleTheme()" class="w-10 h-10 glass flex items-center justify-center text-yellow-500"><i data-lucide="sun" id="theme-icon"></i></button>
             </header>
 
-            <div class="glass p-4 mb-6 border border-yellow-500/30">
-                <h3 class="text-[10px] font-black uppercase text-yellow-600 tracking-widest mb-3">ZONA DE DATOS</h3>
-                <div class="flex gap-2">
-                    <button onclick="exportData()" class="flex-1 py-3 bg-zinc-800 text-white rounded-xl font-bold text-[10px] flex flex-col items-center justify-center gap-1">
-                        <i data-lucide="save" class="w-4"></i> BACKUP
-                    </button>
-                    <button onclick="document.getElementById('file-input').click()" class="flex-1 py-3 bg-zinc-800 text-white rounded-xl font-bold text-[10px] flex flex-col items-center justify-center gap-1">
-                        <i data-lucide="upload" class="w-4"></i> RESTAURAR
-                    </button>
-                    <input type="file" id="file-input" class="hidden" accept=".json" onchange="importData(this)">
-                </div>
-            </div>
-
             <div class="glass p-5 space-y-4">
-                <h3 class="text-xs font-black uppercase text-blue-500 tracking-widest mb-2">Registro Rápido</h3>
-                <div class="flex p-1 bg-zinc-800/10 rounded-xl mb-2">
-                    <button id="btn-ent" onclick="setOp('ENTRADA')" class="flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs shadow-lg transition-all">ENTRADA</button>
+                <div class="flex p-1 bg-zinc-800/40 rounded-xl mb-2">
+                    <button id="btn-ent" onclick="setOp('ENTRADA')" class="flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs transition-all">ENTRADA</button>
                     <button id="btn-sal" onclick="setOp('SALIDA')" class="flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs transition-all">SALIDA</button>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="m-prod" placeholder="Producto" class="input-pro col-span-2" list="list-prods">
-                    <input type="number" id="m-cant" placeholder="Cant." class="input-pro">
-                    <input type="text" id="m-uni" placeholder="Unidad" class="input-pro">
+
+                <div class="space-y-3">
+                    <input type="text" id="m-prod" placeholder="PRODUCTO" class="input-pro" list="list-prods">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="m-cant" placeholder="CANTIDAD" class="input-pro">
+                        <input type="text" id="m-uni" placeholder="UNIDAD (m, kg, und)" class="input-pro">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="m-proc" placeholder="PROCESO" class="input-pro">
+                        <input type="text" id="m-emp" placeholder="EMPRESA" class="input-pro">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="m-oc" placeholder="ORDEN COMPRA (OC)" class="input-pro">
+                        <select id="m-loc" class="input-pro">
+                            <option value="PASILLO A">PASILLO A</option>
+                            <option value="PASILLO B">PASILLO B</option>
+                            <option value="OFICINA">OFICINA</option>
+                            <option value="EXTERIOR">EXTERIOR</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="m-prov" placeholder="Prov/Dest" class="input-pro">
-                    <input type="text" id="m-oc" placeholder="O.C. / Ref" class="input-pro">
+                <button onclick="registrar()" class="btn-action bg-blue-600 shadow-lg shadow-blue-900/20">GUARDAR REGISTRO</button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mt-6">
+                <div class="glass p-3 text-center border-b-2 border-blue-500">
+                    <h2 id="kpi-stock" class="text-lg font-black">0</h2>
+                    <p class="text-[7px] font-bold uppercase opacity-50 tracking-tighter">Stock Total</p>
                 </div>
-                <select id="m-loc" class="input-pro">
-                    <option value="PASILLO A">PASILLO A</option>
-                    <option value="PASILLO B">PASILLO B</option>
-                    <option value="PARQUEADERO">PARQUEADERO</option>
-                    <option value="OFICINA">OFICINA</option>
-                </select>
-                <input type="text" id="m-note" placeholder="Observaciones" class="input-pro">
-                <button onclick="registrar()" class="btn-action bg-zinc-900 text-white border border-zinc-700">GUARDAR REGISTRO</button>
+                <div class="glass p-3 text-center border-b-2 border-green-500">
+                    <h2 id="kpi-movs" class="text-lg font-black">0</h2>
+                    <p class="text-[7px] font-bold uppercase opacity-50 tracking-tighter">Movs Hoy</p>
+                </div>
+                <div class="glass p-3 text-center border-b-2 border-orange-500">
+                    <h2 id="kpi-pend" class="text-lg font-black">0</h2>
+                    <p class="text-[7px] font-bold uppercase opacity-50 tracking-tighter">Tareas</p>
+                </div>
             </div>
         </section>
 
         <section id="sec-shelf" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-blue-600">Stock por Zonas</h2>
-            <div class="search-bar">
-                <i data-lucide="search"></i>
-                <input type="text" id="search-shelf" oninput="renderShelf()" placeholder="Buscar..." class="input-pro">
+            <h2 class="text-2xl font-black mb-4 italic text-blue-600">Bodega</h2>
+            <div class="search-bar relative mb-4">
+                <input type="text" id="search-shelf" oninput="renderShelf()" placeholder="Buscar producto..." class="input-pro pl-10">
+                <i data-lucide="search" class="absolute left-3 top-3 w-5 text-zinc-500"></i>
             </div>
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
-                <button onclick="filterShelf('TODO')" class="chip active" id="f-shelf-TODO">Todo</button>
-                <button onclick="filterShelf('PASILLO A')" class="chip" id="f-shelf-PASILLOA">Pasillo A</button>
-                <button onclick="filterShelf('PASILLO B')" class="chip" id="f-shelf-PASILLOB">Pasillo B</button>
-                <button onclick="filterShelf('PARQUEADERO')" class="chip" id="f-shelf-PARQUEADERO">Parq.</button>
-                <button onclick="filterShelf('OFICINA')" class="chip" id="f-shelf-OFICINA">Oficina</button>
+            <div id="shelf-view" class="space-y-3"></div>
+        </section>
+
+        <section id="sec-remi" class="page-content">
+            <h2 class="text-2xl font-black mb-4 italic text-blue-600">Generador de Remisión</h2>
+            <div class="glass p-5 mb-6 space-y-3">
+                <input type="text" id="r-cli" placeholder="Nombre Cliente / Empresa" class="input-pro font-bold" oninput="updatePreview()">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" id="r-nit" placeholder="NIT / Cédula" class="input-pro" oninput="updatePreview()">
+                    <input type="text" id="r-tel" placeholder="Ciudad / Tel" class="input-pro" oninput="updatePreview()">
+                </div>
+                <div class="p-4 bg-blue-500/5 border border-dashed border-blue-500/30 rounded-xl">
+                    <div class="flex gap-2">
+                        <input type="text" id="r-item" placeholder="Producto" class="input-pro flex-[3]" list="list-prods">
+                        <input type="number" id="r-q" placeholder="Cant" class="input-pro flex-1">
+                        <button onclick="addItemRem()" class="bg-blue-600 text-white rounded-xl w-10 font-black text-xl">+</button>
+                    </div>
+                </div>
+                <button onclick="abrirFirma()" class="w-full py-3 bg-zinc-800 text-white rounded-xl font-bold text-[10px] tracking-widest">AÑADIR FIRMA DIGITAL</button>
             </div>
-            <div id="shelf-view" class="space-y-4"></div>
+
+            <div class="preview-wrapper">
+                <div id="remi-sheet" class="sheet-a4 relative bg-white">
+                    <div class="flex justify-between items-start border-b-[8px] border-blue-900 pb-6 mb-8">
+                        <div>
+                            <h1 class="text-4xl font-black text-blue-900 leading-none">NICHOLL'S<br>TACTICA S.A.S.</h1>
+                            <p class="text-[10px] mt-2 font-bold tracking-[3px] text-zinc-400 uppercase">FUSAGASUGA/COLOMBIA</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="bg-blue-900 text-white px-4 py-2 rounded-lg inline-block mb-2"><h2 class="text-xl font-black">REMISIÓN</h2></div>
+                            <p class="text-2xl text-red-600 font-mono font-bold">N° <span id="pv-num">0000</span></p>
+                            <p class="text-[10px] text-zinc-500 font-bold" id="pv-fecha"></p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8 mb-8 bg-zinc-50 p-6 rounded-2xl border border-zinc-100">
+                        <div>
+                            <p class="text-[9px] font-black text-blue-900 uppercase mb-1">CLIENTE / DESTINATARIO</p>
+                            <p class="text-lg font-black uppercase text-zinc-800" id="pv-cli">---</p>
+                            <p class="text-sm font-medium text-zinc-500">ID: <span id="pv-nit" class="font-bold">---</span></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] font-black text-blue-900 uppercase mb-1">ORIGEN</p>
+                            <p class="text-sm font-bold text-zinc-800 uppercase">BODEGA PRINCIPAL</p>
+                            <p class="text-sm text-zinc-500 font-medium">Fusagasugá, Cundinamarca</p>
+                        </div>
+                    </div>
+                    <table class="w-full mb-12">
+                        <thead><tr class="bg-blue-900 text-white"><th class="p-3 text-left text-[10px] rounded-l-lg">CANT</th><th class="p-3 text-left text-[10px] rounded-r-lg">DESCRIPCIÓN</th></tr></thead>
+                        <tbody id="pv-items" class="divide-y divide-zinc-200"></tbody>
+                    </table>
+                    <div class="mt-20 grid grid-cols-2 gap-20 px-10">
+                        <div class="border-t-2 border-zinc-300 pt-4 text-center">
+                            <p class="text-[10px] font-black text-zinc-400 uppercase">DESPACHADO POR</p>
+                            <p class="text-sm font-bold mt-2">JULIAN ACOSTA</p>
+                        </div>
+                        <div class="border-t-2 border-blue-900 pt-4 text-center relative">
+                            <img id="pv-sign-img" class="absolute -top-16 left-0 right-0 h-16 object-contain hidden mx-auto">
+                            <p class="text-[10px] font-black text-blue-900 uppercase">RECIBIDO CONFORME</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="saveRemision()" class="btn-action">DESCARGAR REMISIÓN (PDF)</button>
+        </section>
+
+        <section id="sec-label" class="page-content">
+            <h2 class="text-2xl font-black mb-4 italic text-emerald-600">Rótulos Pro</h2>
+            <div class="glass p-5 space-y-3 mb-6">
+                <input type="text" id="l-dest" placeholder="DESTINATARIO (CLIENTE)" class="input-pro uppercase font-black" oninput="updateLabelPreview()">
+                <div class="p-3 bg-emerald-500/5 border border-dashed border-emerald-500/30 rounded-xl">
+                    <p class="text-[9px] font-black text-emerald-600 mb-2">AGREGAR CONTENIDO AL BULTO:</p>
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="l-item" placeholder="Producto" class="input-pro flex-[2]" list="list-prods">
+                        <input type="number" id="l-q" placeholder="Cant" class="input-pro flex-1">
+                        <button onclick="addItemLabel()" class="bg-emerald-600 text-white rounded-xl w-10 font-black">+</button>
+                    </div>
+                    <div id="l-temp-list" class="flex flex-wrap gap-1"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="text" id="l-caja" placeholder="Caja #" class="input-pro text-center" oninput="updateLabelPreview()">
+                    <input type="text" id="l-total" placeholder="De #" class="input-pro text-center" oninput="updateLabelPreview()">
+                    <input type="text" id="l-peso" placeholder="Kg" class="input-pro text-center" oninput="updateLabelPreview()">
+                </div>
+                <div class="mt-4 p-4 bg-white rounded-xl border-2 border-zinc-200 shadow-inner">
+                    <div id="live-label-preview" class="label-design mx-auto transform scale-[0.6] -my-14">
+                        <div class="bg-black text-white text-center font-black p-2 mb-2 text-[10px]">ALMACEN NICHOLL´S TACTICA S.A.S</div>
+                        <p class="text-[8px] font-bold text-gray-400">DESTINATARIO:</p>
+                        <h1 id="lp-dest" class="text-2xl font-black mb-2 uppercase leading-none">---</h1>
+                        <p class="text-[8px] font-bold text-gray-400">CONTENIDO:</p>
+                        <div id="lp-cont" class="text-[9px] font-bold mb-2 uppercase min-h-[40px] whitespace-pre-wrap">---</div>
+                        <div class="flex border-t-2 border-black pt-1">
+                            <div class="flex-1"><p class="text-[8px]">CAJA</p><p id="lp-box" class="text-lg font-black">1/1</p></div>
+                            <div class="flex-1 text-right"><p class="text-[8px]">PESO</p><p id="lp-weight" class="text-lg font-black">-- KG</p></div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="addLabel()" class="btn-action bg-emerald-600">AÑADIR A COLA</button>
+            </div>
+            <div id="print-area"><div id="labels-container" class="space-y-4"></div></div>
+            <button onclick="window.print()" class="btn-action mt-4 bg-zinc-800">IMPRIMIR TODOS LOS RÓTULOS</button>
+        </section>
+
+        <section id="sec-hist" class="page-content">
+            <h2 class="text-2xl font-black mb-4 italic text-zinc-500">Historial Detallado</h2>
+            <div id="hist-list" class="space-y-3"></div>
         </section>
 
         <section id="sec-tasks" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-purple-600">Tareas</h2>
+            <h2 class="text-2xl font-black mb-4 italic text-blue-500">Tareas</h2>
             <div class="flex gap-2 mb-4">
-                <input type="text" id="task-input" placeholder="Nueva tarea..." class="input-pro">
-                <button onclick="addTask()" class="bg-purple-600 text-white rounded-xl w-14 font-black text-xl flex items-center justify-center">+</button>
+                <input type="text" id="task-input" placeholder="¿Qué hay que hacer?" class="input-pro">
+                <button onclick="addTask()" class="bg-blue-600 text-white rounded-xl w-14 font-black text-xl">+</button>
             </div>
             <div id="tasks-list" class="space-y-2"></div>
         </section>
 
-        <section id="sec-envios" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-yellow-600">Envíos</h2>
-            <div class="glass p-4 mb-6">
-                <input type="text" id="e-dest" placeholder="Destinatario" class="input-pro mb-2">
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <input type="text" id="e-guia" placeholder="# Guía" class="input-pro">
-                    <input type="text" id="e-trans" placeholder="Transportadora" class="input-pro">
-                </div>
-                <button onclick="addEnvio()" class="btn-action bg-yellow-600 text-black">REGISTRAR</button>
-            </div>
-            <div class="flex gap-2 mb-4 overflow-x-auto">
-                <button onclick="filterEnvios('ALL')" class="chip active">Todos</button>
-                <button onclick="filterEnvios('PENDIENTE')" class="chip">Pendientes</button>
-                <button onclick="filterEnvios('ENTREGADO')" class="chip">Entregados</button>
-            </div>
-            <div id="envios-list" class="space-y-3"></div>
-        </section>
-
-        <section id="sec-devol" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-red-600">Devoluciones</h2>
-            <div class="glass p-4 mb-6 border-l-4 border-red-600">
-                <input type="text" id="d-prod" placeholder="Producto" class="input-pro mb-2" list="list-prods">
-                <div class="grid grid-cols-2 gap-2 mb-2">
-                    <input type="number" id="d-cant" placeholder="Cantidad" class="input-pro">
-                    <select id="d-motivo" class="input-pro">
-                        <option value="DAÑO">Dañado</option>
-                        <option value="ERROR">Error Pedido</option>
-                        <option value="GARANTIA">Garantía</option>
-                    </select>
-                </div>
-                <div class="flex items-center gap-3 mb-2">
-                    <input type="checkbox" id="d-restock" class="w-5 h-5 accent-red-600">
-                    <label for="d-restock" class="text-sm font-bold">Retornar al Stock</label>
-                </div>
-                <button onclick="addDevolucion()" class="btn-action bg-red-600">PROCESAR</button>
-            </div>
-            <div id="devol-list" class="space-y-3"></div>
-        </section>
-
-        <section id="sec-remi" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Remisiones</h2>
-            
-            <div id="gdrive-status" class="hidden mb-4 p-3 bg-zinc-800 rounded-xl flex justify-between items-center border border-zinc-700">
-                <span class="text-xs font-bold text-zinc-400 flex items-center gap-2"><i data-lucide="cloud"></i> GOOGLE DRIVE</span>
-                <button onclick="handleAuthClick()" id="btn-auth" class="text-xs bg-blue-600 px-3 py-1 rounded text-white font-bold hover:bg-blue-500 transition">CONECTAR</button>
-            </div>
-
-            <div class="glass p-5 mb-6">
-                <div class="space-y-3">
-                    <input type="text" id="r-cli" placeholder="Cliente" class="input-pro font-bold" oninput="updatePreview()">
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="r-nit" placeholder="NIT / CC" class="input-pro" oninput="updatePreview()">
-                        <input type="text" id="r-tel" placeholder="Teléfono" class="input-pro" oninput="updatePreview()">
-                    </div>
-                    <div class="p-3 bg-zinc-500/10 rounded-xl mt-4">
-                        <div class="flex gap-2">
-                            <input type="text" id="r-item" placeholder="Item" class="input-pro flex-[2]">
-                            <input type="number" id="r-q" placeholder="#" class="input-pro flex-1">
-                            <button onclick="addItemRem()" class="bg-blue-600 text-white rounded-xl w-12 font-black text-xl">+</button>
-                        </div>
-                    </div>
-                    <button onclick="abrirFirma()" class="w-full py-3 bg-zinc-200 text-black rounded-xl font-bold text-xs flex items-center justify-center gap-2">
-                        <i data-lucide="pen-tool" class="w-4"></i> FIRMAR
-                    </button>
-                </div>
-            </div>
-            
-            <div class="preview-wrapper">
-                <div id="remi-sheet" class="sheet-letter relative">
-                    <div class="flex justify-between border-b-4 border-blue-900 pb-4 mb-6">
-                        <div>
-                            <h1 class="text-4xl font-black text-blue-700">NICHOLL'S TACTICA</h1>
-                            <p class="text-xs uppercase tracking-widest text-zinc-500">FUSAGASUGA-COLOMBIA</p>
-                        </div>
-                        <div class="text-right">
-                            <h2 class="text-2xl font-bold">REMISIÓN</h2>
-                            <p class="text-lg text-red-600 font-mono">N° <span id="pv-num">0000</span></p>
-                        </div>
-                    </div>
-                    <div class="mb-6">
-                        <p><strong>CLIENTE:</strong> <span id="pv-cli">---</span></p>
-                        <p><strong>NIT:</strong> <span id="pv-nit">---</span></p>
-                    </div>
-                    <table class="w-full mb-10 text-sm">
-                        <thead class="bg-blue-900 text-white"><tr class="text-left"><th class="p-2">CANT</th><th class="p-2">DESCRIPCIÓN</th></tr></thead>
-                        <tbody id="pv-items" class="divide-y divide-gray-200"></tbody>
-                    </table>
-                    
-                    <div class="absolute bottom-20 left-10 right-10 flex justify-between">
-                        <div class="border-t border-black pt-2 w-40 text-center text-xs font-bold">AUTORIZADO</div>
-                        <div class="border-t border-black pt-2 w-40 text-center text-xs font-bold relative">
-                            <img id="pv-sign-img" class="absolute -top-12 left-0 right-0 h-12 object-contain hidden mx-auto">RECIBIDO
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button onclick="saveRemision()" id="btn-gen-pdf" class="btn-action">GUARDAR Y SUBIR A DRIVE</button>
-        </section>
-
-        <section id="sec-hist" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Historial</h2>
-            <div class="search-bar">
-                <i data-lucide="search"></i>
-                <input type="text" id="search-hist" oninput="renderHist()" placeholder="Buscar..." class="input-pro">
-            </div>
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
-                <button onclick="filterHist('TODO')" class="chip active">Todo</button>
-                <button onclick="filterHist('ENTRADA')" class="chip">Entradas</button>
-                <button onclick="filterHist('SALIDA')" class="chip">Salidas</button>
-                <button onclick="filterHist('REMISSION')" class="chip">Remisiones</button>
-            </div>
-            <div id="hist-list" class="space-y-3"></div>
-        </section>
-
-        <section id="sec-label" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Rótulos</h2>
-            <div class="glass p-5 space-y-3 mb-6">
-                <input type="text" id="l-dest" placeholder="DESTINATARIO" class="input-pro uppercase font-black">
-                <input type="text" id="l-cont" placeholder="CONTENIDO" class="input-pro">
-                <div class="grid grid-cols-3 gap-2">
-                    <input type="text" id="l-caja" placeholder="Caja #" class="input-pro text-center">
-                    <input type="text" id="l-total" placeholder="De #" class="input-pro text-center">
-                    <input type="text" id="l-peso" placeholder="Kg" class="input-pro text-center">
-                </div>
-                <button onclick="addLabel()" class="btn-action bg-emerald-600">AGREGAR</button>
-            </div>
-            <div class="flex justify-between mb-2"><span class="text-xs font-bold opacity-50">COLA DE IMPRESIÓN</span><button onclick="window.print()" class="text-blue-500 font-bold text-xs">IMPRIMIR</button></div>
-            <div id="print-area"><div id="labels-container"></div></div>
-        </section>
-        
         <section id="sec-calc" class="page-content">
+            <h2 class="text-2xl font-black mb-4 italic">Calculadora</h2>
             <div class="glass p-6">
-                <div class="bg-black/20 p-4 rounded-xl mb-4 text-right overflow-x-auto"><p id="calc-hist" class="text-xs opacity-50 h-4"></p><p id="calc-res" class="text-4xl font-mono font-black">0</p></div>
+                <div class="bg-black p-4 rounded-xl mb-4 text-right overflow-hidden">
+                    <p id="calc-hist" class="text-xs opacity-50 h-4"></p>
+                    <p id="calc-res" class="text-4xl font-mono font-black">0</p>
+                </div>
                 <div class="calc-grid">
                     <button class="btn-calc text-red-500" onclick="cAction('C')">C</button>
                     <button class="btn-calc" onclick="cAction('DEL')">←</button>
@@ -361,65 +293,23 @@
                 </div>
             </div>
         </section>
-
     </main>
 
     <datalist id="list-prods"></datalist>
 
     <script>
-        // --- 1. CONFIGURACIÓN GOOGLE DRIVE ---
-        // ⚠️ REEMPLAZAR ESTOS VALORES CON TUS CREDENCIALES DE GOOGLE CLOUD CONSOLE
-        const CLIENT_ID = 'TU_CLIENT_ID_AQUI.apps.googleusercontent.com';
-        const API_KEY = 'TU_API_KEY_AQUI'; 
-        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-
-        let tokenClient;
-        let gapiInited = false;
-        let gisInited = false;
-
-        function gapiLoaded() { gapi.load('client', initializeGapiClient); }
-        async function initializeGapiClient() {
-            await gapi.client.init({ apiKey: API_KEY, discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"] });
-            gapiInited = true; checkAuth();
-        }
-        function gisLoaded() {
-            tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: '' });
-            gisInited = true; checkAuth();
-        }
-        function checkAuth() {
-            if(gapiInited && gisInited) document.getElementById('gdrive-status').classList.remove('hidden');
-        }
-        function handleAuthClick() {
-            tokenClient.callback = async (resp) => {
-                if (resp.error) throw (resp);
-                const btn = document.getElementById('btn-auth');
-                btn.innerText = "CONECTADO ✅";
-                btn.classList.replace('bg-blue-600', 'bg-green-600');
-            };
-            if (gapi.client.getToken() === null) tokenClient.requestAccessToken({prompt: 'consent'});
-            else tokenClient.requestAccessToken({prompt: ''});
-        }
-
-        // --- 2. BASE DE DATOS Y ESTADO ---
-        const DB_KEY = 'SAGA_V15_DB';
-        let db = JSON.parse(localStorage.getItem(DB_KEY)) || { productos: [], movs: [], tasks: [], envios: [], devoluciones: [], remisiones: [], labels: [], op: 'ENTRADA' };
+        const DB_KEY = 'SAGA_V15_FINAL_DB';
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || { productos: [], movs: [], tasks: [], labels: [], op: 'ENTRADA' };
         let tempRem = [];
+        let tempLabelItems = [];
         let sigPad;
         let calcExp = "";
-        let currentShelfFilter = 'TODO';
-        let currentEnvioFilter = 'ALL';
 
-        // --- 3. ARRANQUE ---
         window.onload = () => {
-            if (localStorage.getItem('SAGA_THEME') === 'light') toggleTheme(false);
             initSignature();
             renderAll();
             lucide.createIcons();
-            if(!localStorage.getItem(DB_KEY)) save();
-            
-            // Iniciar Google API
-            if(typeof gapi !== 'undefined') gapiLoaded();
-            if(typeof google !== 'undefined') gisLoaded();
+            document.getElementById('pv-fecha').innerText = new Date().toLocaleDateString();
         };
 
         function enterApp() {
@@ -433,271 +323,142 @@
 
         const save = () => { localStorage.setItem(DB_KEY, JSON.stringify(db)); renderAll(); };
 
-        // --- 4. BACKUP LOCAL ---
-        function exportData() {
-            const dataStr = JSON.stringify(db);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', 'SAGA_BACKUP_'+ new Date().toLocaleDateString().replace(/\//g,'-') +'.json');
-            linkElement.click();
-        }
-
-        function importData(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const contenido = JSON.parse(e.target.result);
-                    if(contenido.productos && contenido.movs) {
-                        if(confirm("⚠️ ¿Reemplazar datos actuales?")) {
-                            db = contenido; save();
-                            alert("✅ Datos restaurados."); location.reload();
-                        }
-                    } else alert("❌ Archivo inválido.");
-                } catch(err) { alert("❌ Error de lectura."); }
-            };
-            reader.readAsText(file);
-        }
-
-        // --- 5. NAVEGACIÓN ---
         function nav(id) {
             document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active'));
             document.getElementById('sec-' + id).classList.add('active');
             document.getElementById('n-' + id).classList.add('active');
             if(id === 'shelf') renderShelf();
-            if(id === 'tasks') renderTasks();
-            if(id === 'envios') renderEnvios();
             if(id === 'hist') renderHist();
+            if(id === 'tasks') renderTasks();
             lucide.createIcons();
         }
 
-        function toggleTheme(switchIt = true) {
-            if(switchIt) document.body.classList.toggle('light-mode');
-            else document.body.classList.add('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            document.getElementById('theme-icon').setAttribute('data-lucide', isLight ? 'moon' : 'sun');
-            localStorage.setItem('SAGA_THEME', isLight ? 'light' : 'dark');
-            lucide.createIcons();
-        }
-
-        // --- 6. REGISTRO ---
         function setOp(op) {
             db.op = op;
-            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs shadow-lg" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
-            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-2 rounded-lg bg-red-600 text-white font-black text-xs shadow-lg" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
+            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-2 rounded-lg bg-blue-600 text-white font-black text-xs" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
+            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-2 rounded-lg bg-red-600 text-white font-black text-xs" : "flex-1 py-2 rounded-lg text-zinc-500 font-black text-xs";
         }
 
         function registrar() {
-            const prod = document.getElementById('m-prod').value.toUpperCase();
-            const cant = parseFloat(document.getElementById('m-cant').value);
-            const loc = document.getElementById('m-loc').value;
-            if(!prod || isNaN(cant)) return alert("Datos incompletos");
-
-            let p = db.productos.find(x => x.nom === prod);
-            if(!p) { p = { nom: prod, stk: 0, loc: loc }; db.productos.push(p); }
-            p.stk += (db.op === 'ENTRADA' ? cant : -cant);
-            p.loc = loc;
-
-            db.movs.push({
-                tipo: db.op, prod, cant, loc, fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString(),
-                ts: Date.now(), uni: document.getElementById('m-uni').value, prov: document.getElementById('m-prov').value,
-                oc: document.getElementById('m-oc').value, note: document.getElementById('m-note').value
-            });
+            const data = {
+                prod: document.getElementById('m-prod').value.toUpperCase(),
+                cant: parseFloat(document.getElementById('m-cant').value),
+                uni: document.getElementById('m-uni').value.toUpperCase(),
+                proc: document.getElementById('m-proc').value.toUpperCase(),
+                emp: document.getElementById('m-emp').value.toUpperCase(),
+                oc: document.getElementById('m-oc').value.toUpperCase(),
+                loc: document.getElementById('m-loc').value,
+                tipo: db.op,
+                fecha: new Date().toLocaleDateString(),
+                hora: new Date().toLocaleTimeString(),
+                ts: Date.now()
+            };
+            if(!data.prod || isNaN(data.cant)) return alert("Datos incompletos");
+            let p = db.productos.find(x => x.nom === data.prod);
+            if(!p) { p = { nom: data.prod, stk: 0, loc: data.loc }; db.productos.push(p); }
+            p.stk += (db.op === 'ENTRADA' ? data.cant : -data.cant);
+            p.loc = data.loc;
+            db.movs.push(data);
             save();
-            ['m-prod','m-cant','m-uni','m-prov','m-oc','m-note'].forEach(i => document.getElementById(i).value = "");
-            alert("Registro guardado");
+            ['m-prod','m-cant','m-uni','m-proc','m-emp','m-oc'].forEach(i => document.getElementById(i).value = "");
+            alert("Guardado");
         }
 
-        // --- 7. FUNCIONES DE MODULOS ---
-        function filterShelf(zone) {
-            currentShelfFilter = zone;
-            document.querySelectorAll('#sec-shelf .chip').forEach(c => c.classList.remove('active'));
-            document.getElementById('f-shelf-' + zone.replace(/\s/g,'')).classList.add('active');
-            renderShelf();
-        }
         function renderShelf() {
             const search = document.getElementById('search-shelf').value.toUpperCase();
-            const container = document.getElementById('shelf-view');
-            const filtered = db.productos.filter(p => {
-                return (currentShelfFilter === 'TODO' || p.loc === currentShelfFilter) && p.nom.includes(search) && p.stk !== 0;
-            });
-            container.innerHTML = filtered.length ? filtered.map(p => `
-                <div class="glass p-4 flex justify-between items-center border-l-4 ${p.stk < 5 ? 'border-red-500' : 'border-blue-500'}">
-                    <div><h4 class="font-black text-sm uppercase">${p.nom}</h4><p class="text-[10px] opacity-60 font-bold">${p.loc}</p></div>
-                    <span class="text-2xl font-black">${p.stk}</span>
-                </div>`).join('') : '<p class="text-center opacity-30 mt-10">Vacío</p>';
+            document.getElementById('shelf-view').innerHTML = db.productos.filter(p => p.nom.includes(search)).map(p => `
+                <div class="glass p-4 flex justify-between items-center border-l-4 ${p.stk <= 0 ? 'border-red-500' : 'border-blue-500'}">
+                    <div><h4 class="font-black text-sm uppercase">${p.nom}</h4><p class="text-[9px] opacity-60 font-bold">${p.loc}</p></div>
+                    <span class="text-xl font-black">${p.stk}</span>
+                </div>
+            `).join('');
         }
 
-        function addTask() {
-            const txt = document.getElementById('task-input').value;
-            if(!txt) return;
-            db.tasks.push({ id: Date.now(), txt, done: false });
-            document.getElementById('task-input').value = ""; save(); renderTasks();
-        }
-        function renderTasks() {
-            const list = document.getElementById('tasks-list');
-            list.innerHTML = db.tasks.sort((a,b) => a.done - b.done).map(t => `
-                <div class="glass p-3 flex items-center gap-3 ${t.done ? 'opacity-50' : ''}">
-                    <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})" class="w-5 h-5 accent-purple-600">
-                    <span class="flex-1 font-bold text-sm ${t.done ? 'line-through' : ''}">${t.txt}</span>
-                    <button onclick="delTask(${t.id})" class="text-red-500"><i data-lucide="trash-2" class="w-4"></i></button>
-                </div>`).join('');
-            lucide.createIcons();
-        }
-        function toggleTask(id) { const t = db.tasks.find(x => x.id === id); if(t) { t.done = !t.done; save(); renderTasks(); } }
-        function delTask(id) { db.tasks = db.tasks.filter(x => x.id !== id); save(); renderTasks(); }
-
-        function addEnvio() {
-            const dest = document.getElementById('e-dest').value;
-            if(!dest) return;
-            db.envios.push({ id: Date.now(), dest, guia: document.getElementById('e-guia').value, trans: document.getElementById('e-trans').value, status: 'PENDIENTE', fecha: new Date().toLocaleDateString() });
-            save(); renderEnvios(); document.getElementById('e-dest').value = ""; document.getElementById('e-guia').value = "";
-        }
-        function filterEnvios(st) { currentEnvioFilter = st; renderEnvios(); }
-        function renderEnvios() {
-            const list = document.getElementById('envios-list');
-            list.innerHTML = db.envios.filter(e => currentEnvioFilter === 'ALL' || e.status === currentEnvioFilter).map(e => `
-                <div class="glass p-4 border-l-4 ${e.status === 'PENDIENTE' ? 'border-yellow-500' : (e.status === 'ENTREGADO' ? 'border-green-500' : 'border-blue-500')}">
-                    <div class="flex justify-between mb-2"><span class="font-black text-sm uppercase">${e.dest}</span><span class="status-badge">${e.status}</span></div>
-                    <div class="flex justify-between items-end"><div class="text-xs opacity-60"><p>Guía: ${e.guia || '---'}</p><p>${e.trans || '---'}</p></div>
-                    <button onclick="nextStatus(${e.id})" class="text-[10px] font-bold bg-zinc-800 text-white px-3 py-1 rounded-full">AVANZAR</button></div>
-                </div>`).join('');
-        }
-        function nextStatus(id) {
-            const e = db.envios.find(x => x.id === id);
-            if(e.status === 'PENDIENTE') e.status = 'EN_TRANSITO'; else if(e.status === 'EN_TRANSITO') e.status = 'ENTREGADO';
-            save(); renderEnvios();
+        function renderHist() {
+            document.getElementById('hist-list').innerHTML = db.movs.slice().reverse().map(m => `
+                <div class="glass p-4 border-l-4 ${m.tipo === 'ENTRADA' ? 'border-green-500' : 'border-red-500'}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div><span class="text-[8px] bg-zinc-800 px-2 py-1 rounded font-bold">${m.tipo}</span><h4 class="font-black text-blue-500 mt-1 uppercase text-xs">${m.prod}</h4></div>
+                        <p class="font-black">${m.cant} <span class="text-[9px] opacity-50">${m.uni}</span></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 text-[8px] font-bold opacity-70">
+                        <p>OC: ${m.oc || '-'}</p><p>UBICACIÓN: ${m.loc}</p><p>EMP: ${m.emp || '-'}</p>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function addDevolucion() {
-            const prod = document.getElementById('d-prod').value.toUpperCase();
-            const cant = parseFloat(document.getElementById('d-cant').value);
-            const restock = document.getElementById('d-restock').checked;
-            if(!prod || isNaN(cant)) return alert("Faltan datos");
-            
-            db.devoluciones.push({ prod, cant, motivo: document.getElementById('d-motivo').value, fecha: new Date().toLocaleDateString(), restock });
-            if(restock) {
-                let p = db.productos.find(x => x.nom === prod);
-                if(p) p.stk += cant; else db.productos.push({ nom: prod, stk: cant, loc: 'OFICINA' });
-                db.movs.push({ tipo: 'ENTRADA', prod, cant, loc: 'DEVOLUCION', fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString() });
-            }
-            save(); renderDevoluciones(); document.getElementById('d-prod').value = ""; document.getElementById('d-cant').value = ""; alert("Devolución registrada");
-        }
-        function renderDevoluciones() {
-            document.getElementById('devol-list').innerHTML = db.devoluciones.slice().reverse().map(d => `
-                <div class="glass p-3 flex justify-between items-center border-l-4 border-red-500">
-                    <div><h4 class="font-bold text-sm uppercase">${d.prod}</h4><p class="text-[10px] opacity-60">${d.fecha} • ${d.motivo}</p></div>
-                    <div class="text-right"><span class="font-black text-xl text-red-500">${d.cant}</span>${d.restock ? '<span class="text-[8px] block font-bold text-green-500">STOCK</span>' : ''}</div>
-                </div>`).join('');
-        }
-
-        // --- 8. REMISIONES + DRIVE + PDF ---
+        // --- REMISIÓN ---
         function initSignature() { sigPad = new SignaturePad(document.getElementById('canvas-firma')); }
-        function abrirFirma() { document.getElementById('modal-firma').style.display = 'flex'; const c = document.getElementById('canvas-firma'); c.width = c.offsetWidth; c.height = c.offsetHeight; sigPad.clear(); }
+        function abrirFirma() { document.getElementById('modal-firma').style.display = 'flex'; }
         function guardarFirma() {
-            if(!sigPad.isEmpty()) { document.getElementById('pv-sign-img').src = sigPad.toDataURL(); document.getElementById('pv-sign-img').classList.remove('hidden'); }
+            if(!sigPad.isEmpty()) {
+                document.getElementById('pv-sign-img').src = sigPad.toDataURL();
+                document.getElementById('pv-sign-img').classList.remove('hidden');
+            }
             document.getElementById('modal-firma').style.display = 'none';
         }
         function addItemRem() {
-            const desc = document.getElementById('r-item').value; const q = document.getElementById('r-q').value;
+            const desc = document.getElementById('r-item').value, q = document.getElementById('r-q').value;
             if(desc && q) { tempRem.push({desc, q}); document.getElementById('r-item').value = ""; document.getElementById('r-q').value = ""; updatePreview(); }
         }
         function updatePreview() {
             document.getElementById('pv-cli').innerText = document.getElementById('r-cli').value || '---';
             document.getElementById('pv-nit').innerText = document.getElementById('r-nit').value || '---';
             document.getElementById('pv-num').innerText = Date.now().toString().slice(-4);
-            document.getElementById('pv-items').innerHTML = tempRem.map(i => `<tr class="border-b"><td class="p-2 font-bold">${i.q}</td><td class="p-2 uppercase">${i.desc}</td></tr>`).join('');
+            document.getElementById('pv-items').innerHTML = tempRem.map(i => `<tr><td class="p-3 font-bold text-blue-900">${i.q}</td><td class="p-3 uppercase text-zinc-700 text-xs">${i.desc}</td></tr>`).join('');
         }
-
-        async function saveRemision() {
+        function saveRemision() {
             if(tempRem.length === 0) return alert("Sin items");
-            
-            const btn = document.getElementById('btn-gen-pdf');
-            const originalText = btn.innerText;
-            btn.innerText = "GENERANDO...";
-            
-            const element = document.getElementById('remi-sheet');
-            const fileName = `Remision_${document.getElementById('r-cli').value}_${Date.now()}.pdf`;
-
-            // Config para CARTA (Letter)
-            const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' } };
-
-            const pdfWorker = html2pdf().set(opt).from(element);
-            
-            // 1. Guardar Local
-            pdfWorker.save().then(() => {
-                // 2. Subir a Drive
-                pdfWorker.output('blob').then(async (blob) => {
-                    db.remisiones.push({ cli: document.getElementById('r-cli').value, fecha: new Date().toLocaleDateString(), items: [...tempRem], file: fileName });
-                    save();
-                    
-                    if(gapi.client && gapi.client.getToken() !== null) {
-                        btn.innerText = "SUBIENDO A DRIVE...";
-                        try {
-                            await uploadToDrive(blob, fileName);
-                            alert("✅ PDF Guardado y Subido a Drive");
-                        } catch (error) {
-                            console.error(error);
-                            alert("⚠️ Guardado localmente, pero falló Drive.");
-                        }
-                    } else {
-                        alert("✅ PDF descargado (Conecta Drive para subir copia)");
-                    }
-                    
-                    tempRem = []; updatePreview(); btn.innerText = originalText;
-                });
-            });
+            html2pdf().set({ margin: 0, filename: `Remision_${Date.now()}.pdf`, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4' } }).from(document.getElementById('remi-sheet')).save();
         }
 
-        async function uploadToDrive(blob, name) {
-            const metadata = { 'name': name, 'mimeType': 'application/pdf' };
-            const accessToken = gapi.client.getToken().access_token;
-            const form = new FormData();
-            form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-            form.append('file', blob);
-
-            await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                method: 'POST',
-                headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
-                body: form
-            });
+        // --- RÓTULOS ---
+        function addItemLabel() {
+            const p = document.getElementById('l-item').value, q = document.getElementById('l-q').value;
+            if(p && q) { tempLabelItems.push(`${q} - ${p}`); document.getElementById('l-item').value = ""; document.getElementById('l-q').value = ""; renderTempLabelItems(); updateLabelPreview(); }
         }
-
-        // --- 9. AUXILIARES (Historial, Rótulos, Calc) ---
-        let histFilter = 'TODO';
-        function filterHist(f) { histFilter = f; renderHist(); }
-        function renderHist() {
-            const search = document.getElementById('search-hist').value.toUpperCase();
-            const list = document.getElementById('hist-list');
-            let data = [];
-            if(histFilter === 'REMISSION' || histFilter === 'TODO') data = data.concat(db.remisiones.map(r => ({...r, type: 'REMISSION'})));
-            if(histFilter !== 'REMISSION') data = data.concat(db.movs.filter(m => histFilter === 'TODO' || m.tipo === histFilter));
-            
-            list.innerHTML = data.reverse().filter(i => (i.type === 'REMISSION' ? i.cli.toUpperCase() : i.prod).includes(search)).map(i => {
-                if(i.type === 'REMISSION') return `<div class="glass p-3 border-l-4 border-zinc-500"><p class="text-xs font-black text-blue-500">REMISIÓN</p><p class="font-bold">${i.cli}</p><p class="text-[10px] opacity-50">${i.fecha}</p></div>`;
-                return `<div class="glass p-3 border-l-4 ${i.tipo === 'ENTRADA' ? 'border-green-500' : 'border-red-500'}"><div class="flex justify-between"><div><p class="text-[9px] opacity-50 font-bold">${i.fecha} ${i.hora}</p><h4 class="font-bold uppercase text-sm">${i.prod}</h4><p class="text-[10px] italic">${i.loc}</p></div><span class="font-black text-lg ${i.tipo === 'ENTRADA' ? 'text-green-500' : 'text-red-500'}">${i.tipo === 'ENTRADA' ? '+' : '-'}${i.cant}</span></div></div>`;
-            }).join('');
+        function renderTempLabelItems() {
+            document.getElementById('l-temp-list').innerHTML = tempLabelItems.map((it, idx) => `<span class="bg-emerald-100 text-emerald-800 text-[9px] px-2 py-1 rounded font-bold flex items-center gap-1">${it} <i data-lucide="x" class="w-3 cursor-pointer" onclick="tempLabelItems.splice(${idx},1);renderTempLabelItems();updateLabelPreview();"></i></span>`).join('');
+            lucide.createIcons();
         }
-
+        function updateLabelPreview() {
+            document.getElementById('lp-dest').innerText = document.getElementById('l-dest').value || '---';
+            document.getElementById('lp-cont').innerText = tempLabelItems.join('\n') || '---';
+            document.getElementById('lp-box').innerText = `${document.getElementById('l-caja').value || '1'}/${document.getElementById('l-total').value || '1'}`;
+            document.getElementById('lp-weight').innerText = `${document.getElementById('l-peso').value || '--'} KG`;
+        }
         function addLabel() {
-            const l = { dest: document.getElementById('l-dest').value.toUpperCase(), cont: document.getElementById('l-cont').value, caja: document.getElementById('l-caja').value, total: document.getElementById('l-total').value, peso: document.getElementById('l-peso').value };
-            if(!l.dest) return; db.labels.push(l); renderLabels(); document.getElementById('l-dest').value = "";
+            const dest = document.getElementById('l-dest').value.toUpperCase();
+            if(!dest || tempLabelItems.length === 0) return alert("Faltan datos");
+            db.labels.push({ dest, cont: tempLabelItems.join('<br>'), caja: document.getElementById('l-caja').value, total: document.getElementById('l-total').value, peso: document.getElementById('l-peso').value });
+            save(); renderLabels(); tempLabelItems = []; renderTempLabelItems();
         }
         function renderLabels() {
-            document.getElementById('labels-container').innerHTML = db.labels.map(l => `
-                <div class="label-design"><div class="bg-black text-white text-center font-black p-2 mb-4">SAGA LOGISTICS</div><p class="text-xs font-bold text-gray-500">DESTINATARIO:</p><h1 class="text-4xl font-black mb-4 uppercase leading-none">${l.dest}</h1><p class="text-xs font-bold text-gray-500">CONTENIDO:</p><h2 class="text-xl font-bold mb-4 uppercase">${l.cont}</h2><div class="flex border-t-2 border-black pt-2"><div class="flex-1"><p class="text-xs">CAJA</p><p class="text-2xl font-black">${l.caja}/${l.total}</p></div><div class="flex-1 text-right"><p class="text-xs">PESO</p><p class="text-2xl font-black">${l.peso} KG</p></div></div></div>`).join('');
+            document.getElementById('labels-container').innerHTML = db.labels.map(l => `<div class="label-design mx-auto"><div class="bg-black text-white text-center font-black p-2 mb-4">SAGA LOGISTICS</div><p class="text-xs font-bold text-gray-400">DESTINATARIO:</p><h1 class="text-4xl font-black mb-4 uppercase">${l.dest}</h1><p class="text-xs font-bold text-gray-400">CONTENIDO:</p><div class="text-xl font-bold mb-4 uppercase">${l.cont}</div><div class="flex border-t-4 border-black pt-2"><div class="flex-1"><p class="text-xs">CAJA</p><p class="text-3xl font-black">${l.caja}/${l.total}</p></div><div class="flex-1 text-right"><p class="text-xs">PESO</p><p class="text-3xl font-black">${l.peso} KG</p></div></div></div>`).join('');
         }
+
+        // --- OTROS ---
+        function addTask() {
+            const txt = document.getElementById('task-input').value; if(!txt) return;
+            db.tasks.push({ id: Date.now(), txt, done: false }); document.getElementById('task-input').value = ""; save();
+        }
+        function renderTasks() {
+            document.getElementById('tasks-list').innerHTML = db.tasks.map(t => `<div class="glass p-3 flex items-center gap-3 ${t.done ? 'opacity-50' : ''}"><input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})" class="w-5 h-5"><span class="flex-1 font-bold text-sm ${t.done ? 'line-through' : ''}">${t.txt}</span></div>`).join('');
+        }
+        function toggleTask(id) { const t = db.tasks.find(x => x.id === id); if(t) { t.done = !t.done; save(); } }
 
         function cInput(v) { calcExp += v; document.getElementById('calc-hist').innerText = calcExp; }
         function cAction(a) { if(a === 'C') { calcExp = ""; document.getElementById('calc-res').innerText = "0"; } else { calcExp = calcExp.slice(0, -1); } document.getElementById('calc-hist').innerText = calcExp; }
-        function cResult() { try { document.getElementById('calc-res').innerText = eval(calcExp); calcExp = eval(calcExp).toString(); } catch { document.getElementById('calc-res').innerText = "Error"; } }
+        function cResult() { try { let res = eval(calcExp); document.getElementById('calc-res').innerText = res; calcExp = res.toString(); } catch { document.getElementById('calc-res').innerText = "Error"; } }
 
         function renderAll() {
+            document.getElementById('kpi-stock').innerText = db.productos.reduce((a,b)=>a+b.stk, 0);
+            document.getElementById('kpi-movs').innerText = db.movs.filter(m => m.fecha === new Date().toLocaleDateString()).length;
+            document.getElementById('kpi-pend').innerText = db.tasks.filter(t=>!t.done).length;
             document.getElementById('list-prods').innerHTML = db.productos.map(p => `<option value="${p.nom}">`).join('');
-            renderTasks(); renderEnvios();
+            renderTasks(); renderLabels();
         }
     </script>
 </body>
