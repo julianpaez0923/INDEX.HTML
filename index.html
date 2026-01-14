@@ -2,305 +2,428 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAGA MOBIL |COLOMBIA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SAGA MOBIL | COLOMBIA</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;800&family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;800&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --accent: #3b82f6;
-            --bg: #000000; --card: #111111;
-            --text: #ffffff; --border: #222222; --warning: #fbbf24;
+            --accent: #007AFF; /* Azul iOS */
+            --bg: #000000; 
+            --card: #1c1c1e; /* Gris iOS oscuro */
+            --text: #ffffff; 
+            --border: #2c2c2e;
+            
+            /* Colores Calculadora iOS */
+            --calc-orange: #ff9f0a;
+            --calc-dark: #333333;
+            --calc-light: #a5a5a5;
         }
         
         body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 120px; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .glass { background: var(--card); border: 1px solid var(--border); border-radius: 24px; }
-        .input-pro { background: #000; border: 1px solid var(--border); color: white; padding: 16px; border-radius: 16px; width: 100%; outline: none; font-size: 16px; }
-        .input-pro:focus { border-color: var(--accent); }
-        .btn-main { background: var(--accent); color: white; padding: 18px; border-radius: 18px; font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 10px; border: none; width: 100%; }
+        .input-pro { background: #121212; border: 1px solid var(--border); color: white; padding: 16px; border-radius: 16px; width: 100%; outline: none; font-size: 16px; transition: 0.3s; }
+        .input-pro:focus { border-color: var(--accent); background: #1a1a1a; }
+        .btn-main { background: var(--accent); color: white; padding: 18px; border-radius: 18px; font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 10px; border: none; width: 100%; cursor: pointer; font-size: 16px; }
+
+        /* --- HEADER & CLOCK --- */
+        .header-glass { 
+            background: rgba(28, 28, 30, 0.85); 
+            backdrop-filter: blur(20px); 
+            border-bottom: 1px solid var(--border); 
+            padding: 15px 20px; 
+            position: sticky; top: 0; z-index: 1000; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .clock-container { text-align: right; }
+        .clock-time { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 28px; line-height: 1; letter-spacing: -1px; }
+        .clock-ampm { font-size: 12px; font-weight: 600; color: #888; margin-left: 2px; }
 
         /* --- SPLASH SCREEN --- */
         #splash {
             position: fixed; inset: 0; background: #000; z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.6s ease;
         }
-        .saga-logo { font-size: 80px; font-weight: 900; font-style: italic; color: var(--accent); letter-spacing: -5px; animation: pulse 2s infinite; }
-
-        /* --- HEADER & CLOCK --- */
-        .header-glass { background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 20px; position: sticky; top: 0; z-index: 1000; }
-        .clock-font { font-family: 'JetBrains Mono', monospace; }
+        .saga-logo { font-size: 70px; font-weight: 900; font-style: italic; background: -webkit-linear-gradient(45deg, #007AFF, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -4px; animation: pulse 2s infinite; }
 
         /* --- NAVIGATION --- */
-        .dock-wrapper { position: fixed; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 2000; }
-        .dock { background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(20px); padding: 8px; border-radius: 35px; border: 1px solid #333; display: flex; gap: 2px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); overflow-x: auto; max-width: 95vw; }
-        .dock-item { min-width: 50px; height: 50px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #555; transition: 0.2s; flex-shrink: 0; }
-        .dock-item.active { background: var(--accent); color: white; }
-        .dock-item span { font-size: 7px; font-weight: 900; margin-top: 3px; text-transform: uppercase; }
+        .dock-wrapper { position: fixed; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 2000; padding-bottom: env(safe-area-inset-bottom); }
+        .dock { background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(25px); padding: 8px 12px; border-radius: 35px; border: 1px solid #444; display: flex; gap: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); overflow-x: auto; max-width: 95vw; }
+        .dock-item { min-width: 50px; height: 50px; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; transition: 0.3s; flex-shrink: 0; }
+        .dock-item.active { background: #333; color: var(--accent); transform: scale(1.05); }
+        .dock-item span { font-size: 9px; font-weight: 700; margin-top: 3px; }
 
-        /* --- CALCULATOR --- */
-        .calc-grid { display: grid; grid-template-cols: repeat(4, 1fr); gap: 10px; }
-        .calc-btn { background: #1a1a1a; padding: 20px; border-radius: 15px; font-weight: 800; font-size: 20px; text-align: center; }
-        .calc-btn.op { background: var(--accent); }
+        /* --- IOS CALCULATOR --- */
+        .calc-wrapper { display: flex; flex-direction: column; gap: 12px; align-items: center; padding-bottom: 20px; }
+        .calc-row { display: flex; gap: 12px; width: 100%; justify-content: space-between; }
+        .calc-btn { 
+            width: 75px; height: 75px; 
+            border-radius: 50%; 
+            border: none; 
+            font-size: 32px; font-weight: 500; 
+            display: flex; align-items: center; justify-content: center;
+            transition: active 0.1s;
+            color: white;
+            padding: 0; margin: 0;
+        }
+        .calc-btn:active { opacity: 0.7; }
+        
+        /* Colores Específicos iOS */
+        .btn-num { background-color: var(--calc-dark); }
+        .btn-op { background-color: var(--calc-orange); }
+        .btn-top { background-color: var(--calc-light); color: black; font-weight: 600; }
+        
+        .btn-zero { 
+            width: 162px; /* Ancho de 2 botones + gap */
+            border-radius: 40px; 
+            justify-content: flex-start; 
+            padding-left: 28px; 
+        }
 
-        /* --- MODALS & LAYOUTS --- */
-        #sig-modal { position: fixed; inset: 0; background: #fff; z-index: 9999; display: none; flex-direction: column; padding: 20px; }
-        .sig-container { flex: 1; border: 3px dashed #000; border-radius: 20px; margin-bottom: 20px; }
-        #sig-canvas { width: 100%; height: 100%; touch-action: none; }
-        .sheet-a4 { width: 210mm; min-height: 297mm; background: white; color: black; padding: 15mm; margin: auto; transform: scale(0.35); transform-origin: top center; margin-bottom: -180mm; border: 1px solid #ddd; }
-        .page-content { display: none; padding: 15px; animation: fadeInUp 0.4s ease; }
+        #calc-display {
+            width: 100%;
+            text-align: right;
+            font-size: 70px;
+            font-weight: 300;
+            color: white;
+            margin-bottom: 10px;
+            padding: 0 10px;
+            height: 90px;
+            overflow: hidden;
+            line-height: 90px;
+        }
+
+        /* --- REMISION & LABELS (PDF) --- */
+        .preview-scaler { width: 100%; overflow-x: auto; border-radius: 20px; background: #222; padding: 10px; display: flex; justify-content: center; margin-bottom: 20px; border: 1px solid #333; }
+        .sheet-letter { width: 216mm; min-height: 279mm; background: white; color: black; padding: 15mm; box-sizing: border-box; transform-origin: top left; }
+        @media screen { .sheet-letter { transform: scale(0.38); transform-origin: top center; margin-bottom: -170mm; } }
+
+        /* Etiqueta Visual */
+        .label-v22 { background: #fff; color: #000; width: 380px; height: auto; border: 4px solid #000; font-family: 'JetBrains Mono', monospace; position: relative; overflow: hidden; }
+        .label-stripe { background: repeating-linear-gradient(45deg, #facc15, #facc15 15px, #000 15px, #000 30px); height: 25px; width: 100%; }
+        .qr-frame { border: 3px solid #000; padding: 4px; background: #fff; display: inline-block; }
+
+        .page-content { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
         .page-content.active { display: block; }
-        
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }
-        @keyframes fadeInUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
-        /* Rótulo e Historial Styles (Preservados) */
-        .label-v22 { background: #fff; color: #000; width: 350px; border: 10px solid #000; font-family: 'JetBrains Mono', monospace; position: relative; }
-        .label-stripe { background: repeating-linear-gradient(45deg, #facc15, #facc15 15px, #000 15px, #000 30px); height: 20px; width: 100%; }
-        .qr-frame { border: 4px solid #000; padding: 5px; background: #fff; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- IMPRESIÓN --- */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { position: absolute; top: 0; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20mm; padding: 10mm; }
+            .dock-wrapper, header, #splash { display: none !important; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="splash" onclick="this.style.opacity='0'; setTimeout(()=>this.remove(), 800)">
-        <div class="saga-logo">SAGA|MOBIL</div>
-        <div class="text-zinc-500 font-black tracking-[0.3em] text-xs">COLOMBIA</div>
-        <div class="mt-10 text-blue-500 text-xs animate-bounce">TOCA PARA INICIAR</div>
+    <div id="splash">
+        <div class="saga-logo">SAGA MOBIL</div>
+        <div class="text-zinc-500 font-bold tracking-[0.5em] text-sm mt-2">COLOMBIA V10</div>
+        <div class="mt-8">
+            <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
     </div>
 
-    <header class="header-glass flex justify-between items-center">
+    <header class="header-glass">
         <div>
-            <h1 class="text-2xl font-black italic tracking-tighter text-blue-500">SAGA MOBIL</h1>
-            <p id="live-date" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest"></p>
+            <h1 class="text-xl font-black italic tracking-tighter text-blue-500">SAGA MOBIL</h1>
+            <p id="live-date" class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest"></p>
         </div>
-        <div class="text-right">
-            <p id="live-clock" class="clock-font text-2xl font-extrabold text-white leading-none">00:00:00</p>
+        <div class="clock-container">
+            <span id="live-clock" class="clock-time">00:00</span>
+            <span id="live-ampm" class="clock-ampm">AM</span>
         </div>
     </header>
 
     <div class="dock-wrapper">
         <nav class="dock">
-            <div onclick="nav('dash')" class="dock-item active" id="n-dash"><i data-lucide="layout-grid"></i><span>Panel</span></div>
-            <div onclick="nav('remi')" class="dock-item" id="n-remi"><i data-lucide="file-signature"></i><span>Remis</span></div>
-            <div onclick="nav('shelf')" class="dock-item" id="n-shelf"><i data-lucide="package"></i><span>Stock</span></div>
-            <div onclick="nav('tasks')" class="dock-item" id="n-tasks"><i data-lucide="check-square"></i><span>Tareas</span></div>
-            <div onclick="nav('calc')" class="dock-item" id="n-calc"><i data-lucide="calculator"></i><span>Calc</span></div>
-            <div onclick="nav('movs')" class="dock-item" id="n-movs"><i data-lucide="history"></i><span>Hist</span></div>
+            <div onclick="nav('dash')" class="dock-item active" id="n-dash"><i data-lucide="layout-grid"></i><span>Inicio</span></div>
+            <div onclick="nav('remi')" class="dock-item" id="n-remi"><i data-lucide="file-text"></i><span>Remis</span></div>
             <div onclick="nav('label')" class="dock-item" id="n-label"><i data-lucide="sticker"></i><span>Rótulo</span></div>
+            <div onclick="nav('calc')" class="dock-item" id="n-calc"><i data-lucide="calculator"></i><span>Calc</span></div>
+            <div onclick="nav('shelf')" class="dock-item" id="n-shelf"><i data-lucide="package"></i><span>Stock</span></div>
+            <div onclick="nav('movs')" class="dock-item" id="n-movs"><i data-lucide="history"></i><span>Hist</span></div>
         </nav>
     </div>
 
     <main>
         <section id="sec-dash" class="page-content active">
-            <div class="glass p-6 mb-6 space-y-4">
-                <div class="flex bg-black rounded-2xl p-1 border border-zinc-800">
-                    <button onclick="setOp('ENTRADA')" id="btn-ent" class="flex-1 py-4 rounded-xl bg-blue-600 text-white font-black text-xs transition-all">ENTRADA</button>
-                    <button onclick="setOp('SALIDA')" id="btn-sal" class="flex-1 py-4 rounded-xl text-zinc-500 font-black text-xs transition-all">SALIDA</button>
+            <div class="mb-6">
+                <h2 id="greet-msg" class="text-3xl font-bold text-white mb-1">Hola, Operador</h2>
+                <p class="text-zinc-500 text-sm">Panel de Control Logístico</p>
+            </div>
+
+            <div class="glass p-6 mb-6 space-y-4 shadow-2xl">
+                <div class="flex gap-4 mb-4">
+                    <button onclick="setOp('ENTRADA')" id="btn-ent" class="flex-1 py-6 rounded-2xl bg-blue-600/20 border border-blue-500/50 text-blue-400 font-black text-sm flex flex-col items-center gap-2 transition-all hover:bg-blue-600 hover:text-white">
+                        <i data-lucide="arrow-down-circle" size="28"></i> ENTRADA
+                    </button>
+                    <button onclick="setOp('SALIDA')" id="btn-sal" class="flex-1 py-6 rounded-2xl bg-zinc-800 border border-zinc-700 text-zinc-500 font-black text-sm flex flex-col items-center gap-2 transition-all">
+                        <i data-lucide="arrow-up-circle" size="28"></i> SALIDA
+                    </button>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="col-span-2">
-                        <label class="text-[10px] font-bold text-zinc-500 ml-1 uppercase">Producto / SKU</label>
-                        <input type="text" id="m-prod" placeholder="NOMBRE DEL ARTÍCULO" class="input-pro font-black uppercase" list="list-prods">
-                    </div>
+
+                <div class="space-y-3">
                     <div>
-                        <label class="text-[10px] font-bold text-zinc-500 ml-1 uppercase">Cantidad</label>
-                        <input type="number" id="m-cant" placeholder="0" class="input-pro text-center text-2xl font-black">
+                        <input type="text" id="m-prod" placeholder="PRODUCTO / SKU" class="input-pro font-bold uppercase text-lg" list="list-prods">
                     </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-zinc-500 ml-1 uppercase">Orden OC</label>
-                        <input type="text" id="m-oc" placeholder="REF-00" class="input-pro uppercase font-bold">
+                    <div class="flex gap-3">
+                        <input type="number" id="m-cant" placeholder="CANT" class="input-pro text-center text-xl font-bold w-1/3">
+                        <input type="text" id="m-oc" placeholder="ORDEN OC" class="input-pro uppercase font-bold w-2/3">
                     </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-zinc-500 ml-1 uppercase">Ubicación</label>
-                        <input type="text" id="m-ubic" placeholder="ESTANTE" class="input-pro text-xs uppercase">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-zinc-500 ml-1 uppercase">Proceso</label>
-                        <select id="m-proc" class="input-pro text-xs font-bold">
+                    <div class="flex gap-3">
+                        <input type="text" id="m-ubic" placeholder="UBICACIÓN" class="input-pro uppercase text-sm">
+                        <select id="m-proc" class="input-pro text-sm font-bold bg-[#121212]">
                             <option value="ALMACÉN">ALMACÉN</option>
                             <option value="PRODUCCIÓN">PRODUCCIÓN</option>
-                            <option value="CALIDAD">CONTROL CALIDAD</option>
                             <option value="DESPACHO">DESPACHO</option>
                         </select>
                     </div>
-                    <div class="col-span-2">
-                        <label class="text-[10px] font-bold text-zinc-500 ml-1 uppercase">Responsable Operativo</label>
-                        <input type="text" id="m-resp" placeholder="NOMBRE DEL ENCARGADO" class="input-pro uppercase text-sm">
-                    </div>
+                    <input type="text" id="m-resp" placeholder="RESPONSABLE" class="input-pro uppercase text-sm">
                 </div>
-                <button onclick="registrarMov()" class="btn-main mt-4 shadow-xl shadow-blue-900/30">REGISTRAR EN BITÁCORA</button>
+                <button onclick="registrarMov()" class="btn-main mt-4 shadow-lg shadow-blue-500/20 py-4 text-lg">REGISTRAR MOVIMIENTO</button>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="glass p-5"><p class="text-[10px] text-zinc-500 font-bold uppercase">Stock Global</p><p id="kpi-stock" class="text-3xl font-black">0</p></div>
-                <div class="glass p-5"><p class="text-[10px] text-zinc-500 font-bold uppercase">Movs Hoy</p><p id="kpi-movs" class="text-3xl font-black">0</p></div>
-            </div>
-        </section>
 
-        <section id="sec-tasks" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-emerald-500">Pendientes Operativos</h2>
-            <div class="glass p-5 mb-4 space-y-3">
-                <div class="flex gap-2">
-                    <input type="text" id="task-input" placeholder="Nueva tarea..." class="input-pro">
-                    <button onclick="addTask()" class="bg-emerald-600 px-6 rounded-2xl font-black">+</button>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass p-5 border-l-4 border-blue-500">
+                    <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Stock Total</p>
+                    <p id="kpi-stock" class="text-3xl font-black text-white mt-1">0</p>
+                </div>
+                <div class="glass p-5 border-l-4 border-emerald-500">
+                    <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Movs Hoy</p>
+                    <p id="kpi-movs" class="text-3xl font-black text-white mt-1">0</p>
                 </div>
             </div>
-            <div id="tasks-list" class="space-y-2"></div>
         </section>
 
         <section id="sec-calc" class="page-content">
-            <div class="glass p-6">
-                <div id="calc-display" class="bg-black p-6 rounded-2xl text-right text-4xl font-black mb-4 border border-zinc-800 h-20 overflow-hidden">0</div>
-                <div class="calc-grid">
-                    <button onclick="calcClear()" class="calc-btn text-red-500">C</button>
-                    <button onclick="calcKey('/')" class="calc-btn op">÷</button>
-                    <button onclick="calcKey('*')" class="calc-btn op">×</button>
-                    <button onclick="calcKey('-')" class="calc-btn op">-</button>
-                    <button onclick="calcKey('7')" class="calc-btn">7</button>
-                    <button onclick="calcKey('8')" class="calc-btn">8</button>
-                    <button onclick="calcKey('9')" class="calc-btn">9</button>
-                    <button onclick="calcKey('+')" class="calc-btn op">+</button>
-                    <button onclick="calcKey('4')" class="calc-btn">4</button>
-                    <button onclick="calcKey('5')" class="calc-btn">5</button>
-                    <button onclick="calcKey('6')" class="calc-btn">6</button>
-                    <button onclick="calcRes()" class="calc-btn op row-span-2">=</button>
-                    <button onclick="calcKey('1')" class="calc-btn">1</button>
-                    <button onclick="calcKey('2')" class="calc-btn">2</button>
-                    <button onclick="calcKey('3')" class="calc-btn">3</button>
-                    <button onclick="calcKey('0')" class="calc-btn col-span-2">0</button>
-                    <button onclick="calcKey('.')" class="calc-btn">.</button>
+            <div class="flex flex-col justify-end h-[75vh]">
+                <div id="calc-display">0</div>
+                <div class="calc-wrapper">
+                    <div class="calc-row">
+                        <button onclick="calcClear()" class="calc-btn btn-top">C</button>
+                        <button onclick="calcKey('(')" class="calc-btn btn-top">( )</button>
+                        <button onclick="calcKey('%')" class="calc-btn btn-top">%</button>
+                        <button onclick="calcKey('/')" class="calc-btn btn-op">÷</button>
+                    </div>
+                    <div class="calc-row">
+                        <button onclick="calcKey('7')" class="calc-btn btn-num">7</button>
+                        <button onclick="calcKey('8')" class="calc-btn btn-num">8</button>
+                        <button onclick="calcKey('9')" class="calc-btn btn-num">9</button>
+                        <button onclick="calcKey('*')" class="calc-btn btn-op">×</button>
+                    </div>
+                    <div class="calc-row">
+                        <button onclick="calcKey('4')" class="calc-btn btn-num">4</button>
+                        <button onclick="calcKey('5')" class="calc-btn btn-num">5</button>
+                        <button onclick="calcKey('6')" class="calc-btn btn-num">6</button>
+                        <button onclick="calcKey('-')" class="calc-btn btn-op">−</button>
+                    </div>
+                    <div class="calc-row">
+                        <button onclick="calcKey('1')" class="calc-btn btn-num">1</button>
+                        <button onclick="calcKey('2')" class="calc-btn btn-num">2</button>
+                        <button onclick="calcKey('3')" class="calc-btn btn-num">3</button>
+                        <button onclick="calcKey('+')" class="calc-btn btn-op">+</button>
+                    </div>
+                    <div class="calc-row">
+                        <button onclick="calcKey('0')" class="calc-btn btn-num btn-zero">0</button>
+                        <button onclick="calcKey('.')" class="calc-btn btn-num">.</button>
+                        <button onclick="calcRes()" class="calc-btn btn-op">=</button>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="sec-remi" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic">Gestor de Remisiones</h2>
+            <h2 class="text-2xl font-black mb-4 italic text-white">Generar Remisión</h2>
             <div class="glass p-5 mb-4 space-y-4">
                 <input type="text" id="r-cli" placeholder="CLIENTE / DESTINO" class="input-pro font-black" oninput="updateRemPreview()">
                 <div class="flex gap-2">
                     <input type="text" id="r-item" placeholder="Ítem" class="input-pro flex-[2]" list="list-prods">
-                    <input type="number" id="r-q" placeholder="Cant" class="input-pro flex-1 text-center">
-                    <button onclick="addItemRem()" class="bg-blue-600 px-6 rounded-2xl font-black text-2xl">+</button>
+                    <input type="number" id="r-q" placeholder="#" class="input-pro flex-1 text-center">
+                    <button onclick="addItemRem()" class="bg-blue-600 text-white w-14 rounded-2xl font-black text-2xl flex items-center justify-center shadow-lg">+</button>
                 </div>
-                <button onclick="openSig()" class="w-full py-4 border-2 border-dashed border-zinc-700 rounded-2xl flex items-center justify-center gap-2 text-zinc-400 font-bold">
-                    <i data-lucide="pen-tool"></i> FIRMA DIGITAL RECEPTOR
+                <button onclick="openSig()" class="w-full py-4 border border-dashed border-zinc-600 rounded-2xl flex items-center justify-center gap-2 text-zinc-400 text-sm font-bold hover:bg-zinc-900 transition">
+                    <i data-lucide="pen-tool"></i> FIRMAR DOCUMENTO
                 </button>
             </div>
-            <div class="overflow-hidden rounded-3xl bg-zinc-900 mb-6 border border-zinc-800">
-                <div id="remi-preview" class="sheet-a4">
+            
+            <div class="preview-scaler mb-6">
+                <div id="remi-preview" class="sheet-letter relative">
                     <div class="flex justify-between items-start border-b-[8px] border-black pb-6 mb-8">
-                        <div><h1 class="text-5xl font-black italic leading-none">NICHOLL'S<br>TACTICA</h1><p class="text-sm font-bold opacity-60">EQUIPAMIENTO PROFESIONAL</p></div>
-                        <div class="text-right"><div class="bg-black text-white px-8 py-3 font-black text-2xl">REMISIÓN</div><p class="text-2xl font-mono font-bold mt-2">N° <span id="pv-r-num">0000</span></p></div>
+                        <div>
+                            <h1 class="text-5xl font-black italic leading-none">NICHOLL'S<br>TACTICA</h1>
+                            <p class="text-sm font-bold opacity-60 mt-1">EQUIPAMIENTO PROFESIONAL</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="bg-black text-white px-6 py-2 font-black text-2xl inline-block">REMISIÓN</div>
+                            <p class="text-2xl font-mono font-bold mt-2 text-gray-700"># <span id="pv-r-num">0001</span></p>
+                        </div>
                     </div>
                     <div class="flex justify-between items-end mb-8">
-                        <div class="text-xl">
-                            <p><strong>CLIENTE:</strong> <span id="pv-r-cli" class="uppercase">---</span></p>
-                            <p class="text-sm mt-2"><strong>FECHA:</strong> <span id="pv-r-date">---</span></p>
+                        <div class="text-xl text-black">
+                            <p class="mb-1"><strong>CLIENTE:</strong> <span id="pv-r-cli" class="uppercase">---</span></p>
+                            <p class="text-sm text-gray-600"><strong>FECHA:</strong> <span id="pv-r-date">---</span></p>
                         </div>
                         <div id="pv-r-qr"></div>
                     </div>
                     <table class="w-full text-left border-collapse mb-12">
-                        <thead><tr class="bg-zinc-200 border-b-4 border-black"><th class="p-4 font-black text-lg uppercase">Descripción del Producto</th><th class="p-4 text-center w-32 font-black text-lg uppercase">Cant</th></tr></thead>
-                        <tbody id="pv-r-body" class="text-lg"></tbody>
+                        <thead>
+                            <tr class="bg-gray-100 border-b-4 border-black">
+                                <th class="p-3 font-black text-lg uppercase text-black">Producto</th>
+                                <th class="p-3 text-center w-32 font-black text-lg uppercase text-black">Cant</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pv-r-body" class="text-lg text-black font-medium"></tbody>
                     </table>
-                    <div class="mt-24 border-t-2 border-black w-72 text-center relative"><img id="pv-r-sig" class="absolute -top-32 left-0 w-full h-32 object-contain" src="" alt=""><p class="font-black text-lg uppercase mt-4">Recibido Conforme</p></div>
+                    <div class="mt-32 border-t-2 border-black w-64 text-center relative">
+                        <img id="pv-r-sig" class="absolute -top-24 left-0 w-full h-24 object-contain" src="" alt="" style="display:none">
+                        <p class="font-bold text-sm uppercase mt-2 text-black">Recibido Conforme</p>
+                    </div>
                 </div>
             </div>
-            <button onclick="exportRemision()" class="btn-main bg-emerald-600 mb-20"><i data-lucide="download"></i> GENERAR PDF</button>
-        </section>
-
-        <section id="sec-shelf" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-blue-400">Control de Inventario</h2>
-            <input type="text" id="shelf-search" oninput="renderShelf()" placeholder="Filtrar por nombre..." class="input-pro mb-4">
-            <div id="shelf-view" class="space-y-2 pb-20"></div>
-        </section>
-
-        <section id="sec-movs" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-orange-500">Historial Logístico</h2>
-            <div class="glass p-5 mb-4 space-y-3">
-                <input type="text" id="h-search" placeholder="Buscador global..." class="input-pro text-sm" oninput="renderMovs()">
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="text-[9px] font-bold text-zinc-500 uppercase">Desde</label><input type="date" id="h-from" class="input-pro text-xs" onchange="renderMovs()"></div>
-                    <div><label class="text-[9px] font-bold text-zinc-500 uppercase">Hasta</label><input type="date" id="h-to" class="input-pro text-xs" onchange="renderMovs()"></div>
-                </div>
-            </div>
-            <div id="movs-list" class="space-y-3"></div>
+            <button onclick="exportRemision()" class="btn-main bg-emerald-600 mb-20"><i data-lucide="download"></i> DESCARGAR PDF</button>
         </section>
 
         <section id="sec-label" class="page-content">
-            <h2 class="text-2xl font-black mb-4 italic text-yellow-500">Etiquetado de Carga</h2>
+            <h2 class="text-2xl font-black mb-4 italic text-yellow-500">Etiqueta de Carga</h2>
             <div class="glass p-5 mb-6 space-y-4">
-                <input type="text" id="l-dest" placeholder="DESTINATARIO FINAL" class="input-pro font-black uppercase" oninput="renderLabelPreview()">
+                <input type="text" id="l-dest" placeholder="DESTINATARIO" class="input-pro font-black uppercase" oninput="renderLabelPreview()">
                 <div class="flex gap-2">
-                    <input type="text" id="l-item-n" placeholder="Producto" class="input-pro flex-[2]" list="list-prods">
-                    <input type="number" id="l-item-q" placeholder="Cant" class="input-pro flex-1 text-center">
-                    <button onclick="addLabelItem()" class="bg-zinc-700 px-5 rounded-2xl font-black text-xl">+</button>
+                    <input type="text" id="l-item-n" placeholder="Contenido" class="input-pro flex-[2]" list="list-prods">
+                    <input type="number" id="l-item-q" placeholder="#" class="input-pro flex-1 text-center">
+                    <button onclick="addLabelItem()" class="bg-zinc-800 text-white w-14 rounded-2xl font-black text-xl flex items-center justify-center">+</button>
                 </div>
-                <div class="flex justify-center p-6 bg-zinc-950 rounded-3xl">
+                
+                <div class="flex justify-center p-4 bg-[#111] rounded-3xl border border-zinc-800 overflow-hidden">
                     <div id="live-label" class="label-v22">
                         <div class="label-stripe"></div>
-                        <div class="p-5">
-                            <div class="flex justify-between items-center mb-6 border-b-2 border-black pb-2">
-                                <span class="font-black text-[9px] uppercase">ALMACEN/NICHOLL´S TACTICA S.A.S</span>
-                                <span class="bg-black text-white px-2 py-0.5 text-[9px] font-black" id="pv-l-ref">ID: 0000</span>
+                        <div class="p-5 flex flex-col h-full justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-4 border-b-2 border-black pb-2">
+                                    <span class="font-black text-[10px] uppercase">ALMACEN/NICHOLL´S TACTICA</span>
+                                    <span class="bg-black text-white px-2 py-1 text-[10px] font-black" id="pv-l-ref">ID: 0000</span>
+                                </div>
+                                <div class="mb-4">
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase">DESTINATARIO:</span>
+                                    <div id="pv-l-dest" class="text-2xl font-black uppercase leading-tight mt-1 break-words">---</div>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase">CONTENIDO:</span>
+                                    <div id="pv-l-body" class="text-xs font-bold mt-1 uppercase leading-snug min-h-[40px]">---</div>
+                                </div>
                             </div>
-                            <div class="mb-6"><span class="text-[10px] font-black opacity-40 uppercase">Consignado a:</span><div id="pv-l-dest" class="text-3xl font-black uppercase leading-none">---</div></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><span class="text-[10px] font-black opacity-40 uppercase">Contenido:</span><div id="pv-l-body" class="text-[11px] font-bold mt-2">---</div></div>
-                                <div class="flex justify-end items-end"><div id="pv-l-qr" class="qr-frame"></div></div>
+                            <div class="flex justify-end pt-2">
+                                <div id="pv-l-qr" class="qr-frame"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <button onclick="addLabelToPrint()" class="btn-main bg-yellow-500 text-black">COLA DE IMPRESIÓN</button>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="exportLabelPDF()" class="btn-main bg-white text-black text-sm">
+                        <i data-lucide="file-down"></i> PDF ETIQUETA
+                    </button>
+                    <button onclick="addLabelToPrint()" class="btn-main bg-yellow-500 text-black text-sm">
+                        <i data-lucide="printer"></i> A COLA PRINT
+                    </button>
+                </div>
             </div>
-            <div id="print-area"><div id="print-queue" class="flex flex-col gap-10 items-center"></div></div>
-            <button onclick="window.print()" class="btn-main bg-white text-black mb-10">IMPRIMIR TODO</button>
+
+            <div class="glass p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-zinc-400 font-bold text-xs uppercase">Cola de Impresión (<span id="q-count">0</span>)</h3>
+                    <button onclick="clearPrintQueue()" class="text-red-500 text-xs font-bold">LIMPIAR</button>
+                </div>
+                <div id="print-area"></div> <button onclick="window.print()" class="btn-main bg-zinc-800 text-white mt-4 text-sm font-bold border border-zinc-700">IMPRIMIR COLA (Navegador)</button>
+            </div>
+        </section>
+
+        <section id="sec-shelf" class="page-content">
+            <h2 class="text-2xl font-black mb-4 italic text-blue-400">Inventario</h2>
+            <input type="text" id="shelf-search" oninput="renderShelf()" placeholder="Buscar producto..." class="input-pro mb-4">
+            <div id="shelf-view" class="space-y-2 pb-20"></div>
+        </section>
+
+        <section id="sec-movs" class="page-content">
+            <h2 class="text-2xl font-black mb-4 italic text-orange-500">Historial</h2>
+            <div class="glass p-5 mb-4 space-y-3">
+                <input type="text" id="h-search" placeholder="Buscar..." class="input-pro text-sm" oninput="renderMovs()">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="date" id="h-from" class="input-pro text-xs" onchange="renderMovs()">
+                    <input type="date" id="h-to" class="input-pro text-xs" onchange="renderMovs()">
+                </div>
+            </div>
+            <div id="movs-list" class="space-y-3"></div>
         </section>
     </main>
 
     <div id="sig-modal">
-        <h2 class="text-2xl font-black text-black mb-4 uppercase italic">Panel de Firma</h2>
-        <div class="sig-container"><canvas id="sig-canvas"></canvas></div>
+        <h2 class="text-2xl font-black text-black mb-1 uppercase italic">Firma Digital</h2>
+        <p class="text-gray-500 text-xs mb-4">Usa el dedo para firmar en el recuadro</p>
+        <div class="sig-container bg-white border-2 border-dashed border-gray-300 rounded-xl mb-4 flex-1 relative overflow-hidden">
+            <canvas id="sig-canvas" class="w-full h-full"></canvas>
+        </div>
         <div class="grid grid-cols-2 gap-4">
-            <button onclick="closeSig(false)" class="p-6 bg-zinc-200 text-black font-black rounded-2xl">CANCELAR</button>
-            <button onclick="closeSig(true)" class="p-6 bg-black text-white font-black rounded-2xl">GUARDAR</button>
+            <button onclick="closeSig(false)" class="p-5 bg-gray-100 text-black font-bold rounded-xl">Cancelar</button>
+            <button onclick="closeSig(true)" class="p-5 bg-black text-white font-bold rounded-xl">Guardar</button>
         </div>
     </div>
 
     <datalist id="list-prods"></datalist>
 
     <script>
-        // DB extendida para Tareas
-        let db = JSON.parse(localStorage.getItem('SAGA_V22_DB')) || {
-            productos: [], movs: [], op: 'ENTRADA', remItems: [], labelItems: [], tareas: []
+        // Database
+        let db = JSON.parse(localStorage.getItem('SAGA_V25_DB')) || {
+            productos: [], movs: [], op: 'ENTRADA', remItems: [], labelItems: []
         };
         let sPad;
         let calcVal = "";
 
-        const save = () => { localStorage.setItem('SAGA_V22_DB', JSON.stringify(db)); renderAll(); };
-
+        // Inicialización
         window.onload = () => {
             uClock(); setInterval(uClock, 1000);
+            greetUser();
             initSig();
             renderAll();
+            lucide.createIcons();
             setTimeout(() => { 
                 const s = document.getElementById('splash');
-                if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 800); }
-            }, 2500);
+                if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 600); }
+            }, 2000);
         };
 
+        const save = () => { localStorage.setItem('SAGA_V25_DB', JSON.stringify(db)); renderAll(); };
+
+        // Reloj 12h y Saludo
         function uClock() {
             const now = new Date();
-            document.getElementById('live-clock').innerText = now.toLocaleTimeString([], {hour12:false});
-            document.getElementById('live-date').innerText = now.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // el 0 es 12
+            
+            document.getElementById('live-clock').innerText = `${hours}:${minutes}`;
+            document.getElementById('live-ampm').innerText = ampm;
+            document.getElementById('live-date').innerText = now.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'short'});
         }
 
+        function greetUser() {
+            const h = new Date().getHours();
+            const g = h < 12 ? 'Buenos Días' : h < 18 ? 'Buenas Tardes' : 'Buenas Noches';
+            document.getElementById('greet-msg').innerText = `${g}, Team`;
+        }
+
+        // Navegación
         function nav(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
@@ -309,63 +432,66 @@
             lucide.createIcons();
             if(id === 'movs') renderMovs();
             if(id === 'shelf') renderShelf();
-            if(id === 'tasks') renderTasks();
         }
 
-        // --- CALCULADORA ---
-        function calcKey(k) { calcVal += k; document.getElementById('calc-display').innerText = calcVal; }
-        function calcClear() { calcVal = ""; document.getElementById('calc-display').innerText = "0"; }
-        function calcRes() { try { calcVal = eval(calcVal).toString(); document.getElementById('calc-display').innerText = calcVal; } catch(e) { calcVal = ""; document.getElementById('calc-display').innerText = "ERR"; } }
-
-        // --- TAREAS ---
-        function addTask() {
-            const txt = document.getElementById('task-input').value;
-            if(!txt) return;
-            db.tareas.push({ id: Date.now(), txt, done: false });
-            document.getElementById('task-input').value = "";
-            save(); renderTasks();
+        // Calculadora iOS Logic
+        function calcKey(k) { 
+            calcVal += k; 
+            document.getElementById('calc-display').innerText = calcVal; 
         }
-        function toggleTask(id) {
-            const t = db.tareas.find(x => x.id === id);
-            if(t) t.done = !t.done;
-            save(); renderTasks();
+        function calcClear() { 
+            calcVal = ""; 
+            document.getElementById('calc-display').innerText = "0"; 
         }
-        function renderTasks() {
-            document.getElementById('tasks-list').innerHTML = db.tareas.map(t => `
-                <div class="glass p-4 flex justify-between items-center ${t.done ? 'opacity-40' : ''}">
-                    <span class="font-bold ${t.done ? 'line-through' : ''}">${t.txt}</span>
-                    <button onclick="toggleTask(${t.id})" class="p-2 bg-zinc-800 rounded-lg">
-                        <i data-lucide="${t.done ? 'check-circle' : 'circle'}" class="${t.done ? 'text-emerald-500' : 'text-zinc-500'}"></i>
-                    </button>
-                </div>
-            `).join('');
-            lucide.createIcons();
+        function calcRes() { 
+            try { 
+                // Evitar eval inseguro en producción, pero funcional para este demo simple
+                calcVal = eval(calcVal).toString(); 
+                document.getElementById('calc-display').innerText = calcVal; 
+            } catch(e) { 
+                calcVal = ""; 
+                document.getElementById('calc-display').innerText = "Error"; 
+            } 
         }
 
-        // --- FIRMA ---
+        // Firma Canvas
         function initSig() {
             const canvas = document.getElementById('sig-canvas');
-            sPad = new SignaturePad(canvas, { backgroundColor: '#fff' });
+            sPad = new SignaturePad(canvas, { backgroundColor: 'rgb(255, 255, 255)', penColor: 'rgb(0, 0, 0)' });
         }
         function openSig() {
             document.getElementById('sig-modal').style.display = 'flex';
+            resizeCanvas();
+            sPad.clear();
+        }
+        function resizeCanvas() {
             const canvas = document.getElementById('sig-canvas');
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            sPad.clear();
         }
         function closeSig(keep) {
-            if(keep && !sPad.isEmpty()) document.getElementById('pv-r-sig').src = sPad.toDataURL();
+            if(keep && !sPad.isEmpty()) {
+                const img = document.getElementById('pv-r-sig');
+                img.src = sPad.toDataURL();
+                img.style.display = 'block';
+            }
             document.getElementById('sig-modal').style.display = 'none';
         }
 
-        // --- LOGICA CORE ---
+        // Operaciones Inventario
         function setOp(op) {
             db.op = op;
-            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-4 rounded-xl bg-blue-600 text-white font-black text-xs" : "flex-1 py-4 rounded-xl text-zinc-500 font-black text-xs";
-            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-4 rounded-xl bg-red-600 text-white font-black text-xs" : "flex-1 py-4 rounded-xl text-zinc-500 font-black text-xs";
+            const btnE = document.getElementById('btn-ent');
+            const btnS = document.getElementById('btn-sal');
+            if(op === 'ENTRADA') {
+                btnE.classList.replace('text-blue-400', 'text-white'); btnE.classList.replace('bg-blue-600/20', 'bg-blue-600');
+                btnS.classList.replace('text-white', 'text-zinc-500'); btnS.classList.replace('bg-red-600', 'bg-zinc-800');
+            } else {
+                btnE.classList.replace('text-white', 'text-blue-400'); btnE.classList.replace('bg-blue-600', 'bg-blue-600/20');
+                btnS.classList.replace('text-zinc-500', 'text-white'); btnS.classList.replace('bg-zinc-800', 'bg-red-600');
+            }
         }
 
         function registrarMov() {
@@ -386,8 +512,10 @@
             });
             save();
             document.getElementById('m-prod').value = ""; document.getElementById('m-cant').value = "";
+            alert("Movimiento Registrado");
         }
 
+        // Remisiones
         function addItemRem() {
             const item = document.getElementById('r-item').value;
             const q = document.getElementById('r-q').value;
@@ -396,51 +524,36 @@
             updateRemPreview();
             document.getElementById('r-item').value = ""; document.getElementById('r-q').value = "";
         }
-
         function updateRemPreview() {
             const cli = document.getElementById('r-cli').value || '---';
             document.getElementById('pv-r-cli').innerText = cli;
             document.getElementById('pv-r-date').innerText = new Date().toLocaleDateString();
             document.getElementById('pv-r-body').innerHTML = db.remItems.map(i => `
-                <tr class="border-b-2 border-black">
-                    <td class="p-4 font-bold uppercase text-lg">${i.item}</td>
-                    <td class="p-4 text-center font-black text-xl">${i.q}</td>
+                <tr class="border-b border-gray-300">
+                    <td class="p-3 font-bold uppercase text-black">${i.item}</td>
+                    <td class="p-3 text-center font-black text-black">${i.q}</td>
                 </tr>
             `).join('');
             document.getElementById('pv-r-qr').innerHTML = "";
-            new QRCode(document.getElementById('pv-r-qr'), { text: cli + Date.now(), width: 80, height: 80 });
+            new QRCode(document.getElementById('pv-r-qr'), { text: `REM:${cli}|${Date.now()}`, width: 70, height: 70 });
         }
-
         function exportRemision() {
-            const el = document.getElementById('remi-preview');
-            html2pdf().from(el).set({ margin:0, filename:'remision.pdf', html2canvas:{scale:3}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} }).save();
+            const element = document.getElementById('remi-preview');
+            const opt = {
+                margin: 0, filename: `Remision_${Date.now()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+            };
+            // Quitar transformación temporalmente
+            const oldTransform = element.style.transform;
+            element.style.transform = "none";
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.style.transform = oldTransform;
+            });
         }
 
-        function renderMovs() {
-            const s = document.getElementById('h-search').value.toUpperCase();
-            const from = document.getElementById('h-from').value;
-            const to = document.getElementById('h-to').value;
-            let filtered = db.movs.filter(m => {
-                const matchSearch = m.prod.includes(s) || m.oc.includes(s) || m.resp.includes(s);
-                const mDate = new Date(m.ts).toISOString().split('T')[0];
-                const matchDate = (!from || mDate >= from) && (!to || mDate <= to);
-                return matchSearch && matchDate;
-            }).reverse();
-            document.getElementById('movs-list').innerHTML = filtered.map(m => `
-                <div class="glass p-4 text-[11px] border-l-8 ${m.tipo==='ENTRADA'?'border-blue-500':'border-red-500'}">
-                    <div class="flex justify-between font-black uppercase mb-1 items-center">
-                        <span class="text-sm">${m.prod}</span>
-                        <span class="text-xl ${m.tipo==='ENTRADA'?'text-blue-500':'text-red-500'}">${m.tipo==='ENTRADA'?'+':'-'}${m.cant}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-y-1 opacity-60 font-bold uppercase">
-                        <span>OC: ${m.oc || '---'}</span><span>PROC: ${m.proc}</span>
-                        <span>UBIC: ${m.ubic || '---'}</span><span>RESP: ${m.resp || '---'}</span>
-                    </div>
-                    <div class="text-right mt-2 opacity-30 font-mono text-[9px]">${m.fecha} - ${new Date(m.ts).toLocaleTimeString()}</div>
-                </div>
-            `).join('');
-        }
-
+        // Etiquetas (Rótulos)
         function addLabelItem() {
             const n = document.getElementById('l-item-n').value;
             const q = document.getElementById('l-item-q').value;
@@ -449,7 +562,6 @@
             document.getElementById('l-item-n').value = ""; document.getElementById('l-item-q').value = "";
             renderLabelPreview();
         }
-
         function renderLabelPreview() {
             const dest = document.getElementById('l-dest').value.toUpperCase() || '---';
             const refId = Math.floor(1000 + Math.random() * 9000);
@@ -457,35 +569,73 @@
             document.getElementById('pv-l-ref').innerText = "ID: " + refId;
             document.getElementById('pv-l-body').innerHTML = db.labelItems.map(i => `<div>• [${i.q}] ${i.n}</div>`).join('') || 'SIN CONTENIDO';
             document.getElementById('pv-l-qr').innerHTML = "";
-            new QRCode(document.getElementById('pv-l-qr'), { text: `DEST:${dest}|ITEMS:${db.labelItems.length}`, width: 80, height: 80 });
+            new QRCode(document.getElementById('pv-l-qr'), { text: `DEST:${dest}|ID:${refId}`, width: 70, height: 70 });
+        }
+        
+        // Función NUEVA: Descargar Etiqueta Individual como PDF
+        function exportLabelPDF() {
+            const element = document.getElementById('live-label');
+            const opt = {
+                margin: 5,
+                filename: `Etiqueta_${Date.now()}.pdf`,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'mm', format: [100, 80], orientation: 'landscape' } // Ajustado a tamaño etiqueta térmica aprox
+            };
+            html2pdf().set(opt).from(element).save();
         }
 
         function addLabelToPrint() {
-            const clone = document.getElementById('live-label').cloneNode(true);
-            clone.id = "";
-            document.getElementById('print-queue').appendChild(clone);
-            const qrb = clone.querySelector('#pv-l-qr'); qrb.id = ""; qrb.innerHTML = "";
-            new QRCode(qrb, { text: document.getElementById('l-dest').value, width: 80, height: 80 });
-            db.labelItems = []; renderLabelPreview();
+            const original = document.getElementById('live-label');
+            const clone = original.cloneNode(true);
+            const qrb = clone.querySelector('#pv-l-qr');
+            qrb.innerHTML = "";
+            new QRCode(qrb, { text: `DEST:${document.getElementById('pv-l-dest').innerText}`, width: 70, height: 70 });
+            document.getElementById('print-area').appendChild(clone);
+            db.labelItems = []; 
+            document.getElementById('l-dest').value = "";
+            renderLabelPreview();
+            document.getElementById('q-count').innerText = document.getElementById('print-area').children.length;
+        }
+        function clearPrintQueue() {
+            document.getElementById('print-area').innerHTML = "";
+            document.getElementById('q-count').innerText = "0";
         }
 
+        // Renderizadores
         function renderShelf() {
             const s = document.getElementById('shelf-search').value.toUpperCase();
             document.getElementById('shelf-view').innerHTML = db.productos.filter(p=>p.nom.includes(s)).sort((a,b)=>b.stk-a.stk).map(p => `
                 <div class="glass p-5 flex justify-between items-center border-l-4 ${p.stk>0?'border-blue-500':'border-red-500'}">
-                    <span class="font-black text-sm uppercase">${p.nom}</span>
-                    <span class="text-3xl font-black">${p.stk}</span>
+                    <span class="font-bold text-sm uppercase text-white">${p.nom}</span>
+                    <span class="text-2xl font-black text-white">${p.stk}</span>
                 </div>
             `).join('');
         }
-
+        function renderMovs() {
+            const s = document.getElementById('h-search').value.toUpperCase();
+            const from = document.getElementById('h-from').value;
+            const to = document.getElementById('h-to').value;
+            let filtered = db.movs.filter(m => {
+                const matchSearch = m.prod.includes(s) || (m.oc && m.oc.includes(s));
+                const mDate = new Date(m.ts).toISOString().split('T')[0];
+                return matchSearch && (!from || mDate >= from) && (!to || mDate <= to);
+            }).reverse();
+            document.getElementById('movs-list').innerHTML = filtered.map(m => `
+                <div class="glass p-4 text-xs border-l-4 ${m.tipo==='ENTRADA'?'border-blue-500':'border-red-500'}">
+                    <div class="flex justify-between font-bold uppercase mb-1 items-center">
+                        <span class="text-white">${m.prod}</span>
+                        <span class="text-lg ${m.tipo==='ENTRADA'?'text-blue-400':'text-red-400'}">${m.tipo==='ENTRADA'?'+':'-'}${m.cant}</span>
+                    </div>
+                    <div class="text-zinc-500 font-mono">${m.fecha}</div>
+                </div>
+            `).join('');
+        }
         function renderAll() {
             document.getElementById('kpi-stock').innerText = db.productos.reduce((a,b)=>a+b.stk, 0);
             document.getElementById('kpi-movs').innerText = db.movs.filter(m => m.fecha === new Date().toLocaleDateString()).length;
             document.getElementById('list-prods').innerHTML = db.productos.map(p => `<option value="${p.nom}">`).join('');
             renderShelf();
-            renderTasks();
-            lucide.createIcons();
         }
     </script>
 </body>
