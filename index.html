@@ -95,13 +95,13 @@
         /* PREVIEWS OCULTOS (Para PDF) */
         /* Importante: Forzar tamaño carta (215.9mm x 279.4mm) */
         .pdf-container { 
-            position: absolute; 
+            position: absolute;
             left: -9999px; top: 0; 
             width: 215.9mm; 
             min-height: 279.4mm; 
             height: 279.4mm; /* Forzar altura fija */
             display: flex; 
-            flex-direction: column; 
+            flex-direction: column;
             background: white;
             color: black;
             padding: 15mm; /* Margen interno para impresión */
@@ -255,7 +255,7 @@
                             </tr>
                         </thead>
                         <tbody id="movs-table-body">
-                            </tbody>
+                        </tbody>
                     </table>
                     <div id="no-results" class="hidden p-8 text-center text-gray-500 text-sm font-mono">No se encontraron registros.</div>
                 </div>
@@ -371,12 +371,12 @@
 
     </div>
 
-    <div id="sig-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[6000] hidden flex-col p-4 justify-center">
-        <div class="bg-white rounded-2xl p-4 w-full max-w-md mx-auto flex flex-col h-[400px]">
+    <div id="sig-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[6000] hidden flex-col justify-center items-center">
+        <div class="bg-white w-full h-full flex flex-col p-4">
             <h2 class="text-black text-center font-bold text-xl mb-2 uppercase">Firma de Conformidad</h2>
             <div class="flex-1 border-4 border-dashed border-gray-300 rounded-2xl bg-gray-50 overflow-hidden relative">
                 <canvas id="sig-canvas" class="w-full h-full block touch-none"></canvas>
-                <div class="absolute bottom-2 left-0 right-0 text-center text-gray-300 text-xs pointer-events-none uppercase font-black tracking-widest">Área de Firma</div>
+                <div class="absolute bottom-2 left-0 right-0 text-center text-gray-300 text-xs pointer-events-none uppercase font-black tracking-widest">Área de Firma (Pantalla Completa)</div>
             </div>
             <div class="grid grid-cols-2 gap-4 mt-4 h-14">
                 <button onclick="closeSig(false)" class="bg-gray-200 text-black font-black rounded-xl uppercase hover:bg-gray-300">Cancelar</button>
@@ -524,7 +524,6 @@
         }
 
         const save = () => { localStorage.setItem('SAGA_V8_DB', JSON.stringify(db)); renderAll(); };
-
         function uClock() {
             const n = new Date();
             document.getElementById('live-clock').innerText = n.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -567,19 +566,19 @@
             if(!prod || isNaN(cant)) return alert("Faltan datos obligatorios (Producto y Cantidad)");
 
             let p = db.productos.find(x => x.nom === prod);
-            if(!p) { p = { nom: prod, stk: 0 }; db.productos.push(p); }
+            if(!p) { p = { nom: prod, stk: 0 }; db.productos.push(p);
+            }
             p.stk += (op === 'ENTRADA' ? cant : -cant);
-
             db.movs.push({
                 tipo: op, prod, cant, oc, ubica, proc, ts: new Date().toISOString()
             });
-            
             save();
             alert("✅ Movimiento registrado");
             ['m-prod','m-cant','m-oc','m-ubica','m-proc'].forEach(id => document.getElementById(id).value = "");
         }
 
-        function filterType(t) { activeFilter = t; renderMovs(); }
+        function filterType(t) { activeFilter = t;
+            renderMovs(); }
 
         function renderMovs() {
             const tbody = document.getElementById('movs-table-body');
@@ -589,11 +588,11 @@
 
             tbody.innerHTML = "";
             let count = 0;
-
             const filtrados = db.movs.slice().reverse().filter(m => {
                 const dateOk = (!fDesde || m.ts.split('T')[0] >= fDesde) && (!fHasta || m.ts.split('T')[0] <= fHasta);
                 const typeOk = activeFilter === 'ALL' || m.tipo === activeFilter;
                 const textOk = m.prod.includes(search) || m.oc.includes(search) || (m.ubica && m.ubica.includes(search));
+                
                 return dateOk && typeOk && textOk;
             });
 
@@ -677,7 +676,6 @@
                     <td class="p-3 text-center font-bold text-lg">${it.cant}</td>
                 </tr>
             `).join('');
-
             document.getElementById('pdf-r-qr').innerHTML = "";
             new QRCode(document.getElementById('pdf-r-qr'), { text: "REM-"+Date.now(), width: 60, height: 60 });
         }
@@ -687,7 +685,6 @@
             document.getElementById('pdf-l-peso').innerText = (document.getElementById('l-peso').value || "0") + " KG";
             document.getElementById('pdf-l-bulto').innerText = document.getElementById('l-bulto').value || "1/1";
             document.getElementById('pdf-l-id').innerText = "#" + Math.floor(Math.random()*99999999);
-            
             document.getElementById('pdf-l-list').innerHTML = db.labItems.map(x => `<li>${x}</li>`).join('');
 
             document.getElementById('pdf-l-qr').innerHTML = "";
@@ -715,7 +712,7 @@
                 node.style.position = 'relative';
                 node.style.left = '0';
                 node.style.top = '0';
-                node.style.display = 'block'; 
+                node.style.display = 'block';
                 // Para el rotulo que usa flex height
                 node.style.display = 'flex';
                 node.style.flexDirection = 'column';
@@ -729,34 +726,72 @@
             document.getElementById('preview-modal').style.display = 'none';
         }
 
-        // --- EXPORTAR PDF ---
+        // --- EXPORTAR PDF (MODIFICADO PARA ARREGLAR HOJA BLANCA) ---
         async function exportRem() {
             prepareRemiData();
             if(!document.getElementById('pdf-r-sig-img').src) alert("Nota: Documento sin firma.");
 
             const element = document.getElementById('print-area-remi');
+            
+            // TRUCO: Mover temporalmente el elemento a la vista (pero detrás) para que html2pdf lo vea
+            const originalLeft = element.style.left;
+            const originalZ = element.style.zIndex;
+            
+            element.style.left = '0';
+            element.style.top = '0';
+            element.style.zIndex = '-9999';
+
             const opt = {
                 margin: 0,
                 filename: `REMISION_${Date.now()}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
                 jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
             };
-            await html2pdf().set(opt).from(element).save();
+            
+            try {
+                await html2pdf().set(opt).from(element).save();
+            } catch (e) {
+                console.error(e);
+            } finally {
+                // Restaurar estado oculto
+                element.style.left = originalLeft;
+                element.style.zIndex = originalZ;
+            }
+
             db.remItems = []; renderRemList(); save();
         }
 
         async function exportLab() {
             prepareLabData();
             const element = document.getElementById('print-area-lab');
+            
+            // TRUCO: Mover temporalmente el elemento a la vista
+            const originalLeft = element.style.left;
+            const originalZ = element.style.zIndex;
+            
+            element.style.left = '0';
+            element.style.top = '0';
+            element.style.zIndex = '-9999';
+
             const opt = {
                 margin: 0,
                 filename: `ROTULO_${Date.now()}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
                 jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
             };
-            await html2pdf().set(opt).from(element).save();
+            
+            try {
+                await html2pdf().set(opt).from(element).save();
+            } catch (e) {
+                console.error(e);
+            } finally {
+                // Restaurar estado oculto
+                element.style.left = originalLeft;
+                element.style.zIndex = originalZ;
+            }
+
             db.labItems = []; document.getElementById('preview-lab-list').innerHTML = ""; save();
         }
 
@@ -773,6 +808,7 @@
             document.getElementById('sig-modal').style.display = 'flex';
             setTimeout(() => {
                 const canvas = document.getElementById('sig-canvas');
+                // Recalcular tamaño basado en el nuevo modal de pantalla completa
                 const ratio = Math.max(window.devicePixelRatio || 1, 1);
                 canvas.width = canvas.offsetWidth * ratio;
                 canvas.height = canvas.offsetHeight * ratio;
@@ -790,7 +826,8 @@
         // --- TAREAS Y EXTRAS ---
         function addTask() {
             const t = document.getElementById('t-input').value;
-            if(t) { db.tasks.push({ id: Date.now(), txt: t, done: false }); save(); renderTasks(); document.getElementById('t-input').value = ""; }
+            if(t) { db.tasks.push({ id: Date.now(), txt: t, done: false }); save(); renderTasks(); document.getElementById('t-input').value = "";
+            }
         }
         function renderTasks() {
             document.getElementById('tasks-list').innerHTML = db.tasks.map(t => `
@@ -801,7 +838,8 @@
             `).join('');
             lucide.createIcons();
         }
-        function toggleT(id) { const t = db.tasks.find(x=>x.id===id); t.done=!t.done; save(); renderTasks(); }
+        function toggleT(id) { const t = db.tasks.find(x=>x.id===id); t.done=!t.done; save(); renderTasks();
+        }
 
         function renderAll() {
             document.getElementById('kpi-stock').innerText = db.productos.reduce((a,b)=>a+b.stk, 0);
