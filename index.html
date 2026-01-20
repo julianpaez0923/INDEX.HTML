@@ -34,7 +34,6 @@
     <style>
         body { background-color: #000; color: white; overflow-x: hidden; }
         
-        /* EFECTOS VISUALES */
         .glass-panel {
             background: rgba(22, 22, 24, 0.6);
             backdrop-filter: blur(16px);
@@ -43,12 +42,12 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
         
-        /* INPUTS MEJORADOS PARA VISIBILIDAD */
         .input-tech {
-            background: #111; /* Fondo más sólido */
-            border: 1px solid #444; /* Borde más visible */
+            background: #111;
+            border: 1px solid #444;
             color: #fff;
             transition: all 0.3s ease;
+            min-width: 0; /* Evita que el input rompa el flexbox */
         }
         .input-tech::placeholder {
             color: #666;
@@ -61,7 +60,6 @@
             outline: none;
         }
 
-        /* EFECTO TEXTO PLATINUM */
         .text-platinum {
             background: linear-gradient(to bottom, #ffffff 0%, #a0a0a0 50%, #ffffff 100%);
             -webkit-background-clip: text;
@@ -70,52 +68,42 @@
             letter-spacing: -2px;
         }
 
-        /* ANIMACIONES */
         .page-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s ease; }
         .page-content.active { display: block; opacity: 1; transform: translateY(0); }
         
-        /* SELECTOR DE DISPOSITIVO */
         #device-splash {
-            position: fixed; inset: 0; z-index: 9999;
+            position: fixed;
+            inset: 0; z-index: 9999;
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         
-        /* MODO MÓVIL vs PC */
         .app-wrapper { transition: max-width 0.5s ease; width: 100%; margin: 0 auto; padding-bottom: 100px; }
         .mode-mobile { max-width: 480px; border-left: 1px solid #222; border-right: 1px solid #222; min-height: 100vh; }
         .mode-pc { max-width: 1200px; padding: 20px; }
 
-        /* TABLAS DE DATOS */
         .tech-table { width: 100%; border-collapse: separate; border-spacing: 0; }
         .tech-table th { background: rgba(0,243,255,0.1); color: #00f3ff; padding: 12px; font-family: 'Orbitron'; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; text-align: left; }
         .tech-table td { padding: 12px; border-bottom: 1px solid #222; font-size: 0.85rem; }
-        .tech-table tr:hover td { background: rgba(255,255,255,0.03); }
 
-        /* PREVIEWS OCULTOS (Para PDF) */
-        /* Importante: Forzar tamaño carta (215.9mm x 279.4mm) */
+        /* Contenedores de PDF ocultos pero accesibles para la librería */
         .pdf-container { 
             position: absolute;
-            left: -9999px; top: 0; 
-            width: 215.9mm; 
-            min-height: 279.4mm; 
-            height: 279.4mm; /* Forzar altura fija */
-            display: flex; 
-            flex-direction: column;
-            background: white;
-            color: black;
-            padding: 15mm; /* Margen interno para impresión */
-            box-sizing: border-box;
+            left: -9999px;
+            top: -9999px;
+            width: 210mm; /* A4 Standard */
+            background: white !important;
+            color: black !important;
+            padding: 20px;
+            visibility: hidden;
         }
         
-        /* NAV DOCK */
         .dock-container { position: fixed; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 50; pointer-events: none; }
         .dock { pointer-events: auto; background: rgba(10,10,10,0.95); border: 1px solid #333; padding: 10px; border-radius: 24px; display: flex; gap: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
         .dock-btn { width: 50px; height: 50px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; transition: 0.3s; cursor: pointer; }
-        .dock-btn.active { background: #222; color: #00f3ff; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,243,255,0.2); }
+        .dock-btn.active { background: #222; color: #00f3ff; transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0, 243, 255, 0.2); }
         .dock-btn span { font-size: 8px; font-weight: 700; margin-top: 3px; text-transform: uppercase; }
 
-        /* SCROLLBAR PERSONALIZADO */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #000; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
@@ -236,11 +224,6 @@
                         <i data-lucide="search" class="absolute left-3 top-3 w-4 h-4 text-gray-500"></i>
                         <input type="text" id="h-search" placeholder="Buscar SKU, OC, Ubicación..." class="input-tech w-full pl-9 p-2 rounded-lg text-sm" oninput="renderMovs()">
                     </div>
-                    <div class="flex gap-2 text-[10px] font-bold">
-                        <button onclick="filterType('ALL')" class="flex-1 bg-gray-800 hover:bg-gray-700 py-2 rounded text-white border border-gray-600">TODOS</button>
-                        <button onclick="filterType('ENTRADA')" class="flex-1 bg-emerald-900/30 text-emerald-400 border border-emerald-800 py-2 rounded">ENTRADAS</button>
-                        <button onclick="filterType('SALIDA')" class="flex-1 bg-red-900/30 text-red-400 border border-red-800 py-2 rounded">SALIDAS</button>
-                    </div>
                 </div>
 
                 <div class="glass-panel rounded-2xl overflow-hidden overflow-x-auto">
@@ -254,10 +237,8 @@
                                 <th>Detalle</th>
                             </tr>
                         </thead>
-                        <tbody id="movs-table-body">
-                        </tbody>
+                        <tbody id="movs-table-body"></tbody>
                     </table>
-                    <div id="no-results" class="hidden p-8 text-center text-gray-500 text-sm font-mono">No se encontraron registros.</div>
                 </div>
             </section>
 
@@ -267,31 +248,31 @@
                 <div class="glass-panel p-5 rounded-2xl mb-4 space-y-4">
                     <input type="text" id="r-cli" placeholder="CLIENTE / DESTINATARIO" class="input-tech w-full p-3 font-bold uppercase rounded-xl border-emerald-900/50 focus:border-emerald-500">
                     
-                    <div class="bg-gray-800/50 p-3 rounded-xl border border-gray-600 space-y-2 shadow-inner">
-                        <p class="text-[10px] font-black text-gray-300 uppercase tracking-wider">Agregar Ítem</p>
-                        <div class="flex gap-2">
-                            <input type="text" id="r-item" placeholder="Descripción del item" class="input-tech flex-[2] p-2 rounded-lg text-sm bg-black border-gray-500" list="list-prods">
+                    <div class="bg-gray-800/50 p-3 rounded-xl border border-gray-600 space-y-2">
+                        <p class="text-[10px] font-black text-gray-300 uppercase">Agregar Ítem</p>
+                        <div class="flex gap-2 w-full overflow-hidden">
+                            <input type="text" id="r-item" placeholder="Ítem" class="input-tech flex-[3] p-2 rounded-lg text-sm bg-black border-gray-500" list="list-prods">
                             <input type="number" id="r-q" placeholder="#" class="input-tech flex-1 p-2 rounded-lg text-center font-bold bg-black border-gray-500">
-                            <button onclick="addRemItem()" class="bg-emerald-500 hover:bg-emerald-400 text-black w-12 rounded-lg flex items-center justify-center font-black text-xl shadow-lg transition-colors">
+                            <button onclick="addRemItem()" class="bg-emerald-500 hover:bg-emerald-400 text-black px-3 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <i data-lucide="plus"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="max-h-40 overflow-y-auto border border-dashed border-gray-700 rounded-lg p-2 bg-black/20">
+                    <div class="max-h-40 overflow-y-auto border border-dashed border-gray-700 rounded-lg p-2">
                         <table class="w-full text-xs text-left text-gray-300">
                             <tbody id="preview-remi-list"></tbody>
                         </table>
-                        <p id="remi-empty-msg" class="text-center text-gray-600 text-[10px] mt-4">Lista vacía</p>
+                        <p id="remi-empty-msg" class="text-center text-gray-600 text-[10px] mt-2">Lista vacía</p>
                     </div>
 
-                    <button onclick="openSig()" class="w-full py-3 border border-dashed border-gray-500 rounded-xl text-gray-300 text-xs font-black uppercase hover:border-emerald-500 hover:text-emerald-400 transition-colors flex justify-center items-center gap-2">
+                    <button onclick="openSig()" class="w-full py-3 border border-dashed border-gray-500 rounded-xl text-gray-300 text-xs font-black uppercase flex justify-center items-center gap-2">
                         <i data-lucide="pen-tool" class="w-4 h-4"></i> Firmar Digitalmente
                     </button>
                 </div>
-                
+
                 <div class="grid grid-cols-3 gap-2">
-                    <button onclick="previewDoc('remi')" class="col-span-1 bg-gray-700 text-white p-4 rounded-xl font-bold uppercase shadow-lg text-xs flex flex-col items-center justify-center gap-1">
+                    <button onclick="previewDoc('remi')" class="col-span-1 bg-gray-700 text-white p-4 rounded-xl font-bold uppercase text-xs flex flex-col items-center">
                         <i data-lucide="eye"></i> Vista Previa
                     </button>
                     <button onclick="exportRem()" class="col-span-2 bg-emerald-600 hover:bg-emerald-500 text-white p-4 rounded-xl font-black uppercase shadow-lg flex justify-center items-center gap-2">
@@ -304,30 +285,28 @@
                 <h2 class="text-2xl font-cyber font-bold mb-4 text-yellow-400">Etiquetado</h2>
                 
                 <div class="glass-panel p-5 rounded-2xl mb-4 space-y-3">
-                    <input type="text" id="l-dest" placeholder="DESTINO / TIENDA" class="input-tech w-full p-3 font-black uppercase rounded-xl border-yellow-900/50 focus:border-yellow-500">
+                    <input type="text" id="l-dest" placeholder="DESTINO / TIENDA" class="input-tech w-full p-3 font-black uppercase rounded-xl">
                     <div class="grid grid-cols-2 gap-3">
                         <input type="text" id="l-peso" placeholder="PESO KG" class="input-tech w-full p-3 text-sm rounded-xl">
                         <input type="text" id="l-bulto" placeholder="BULTO 1/1" class="input-tech w-full p-3 text-sm rounded-xl">
                     </div>
                     
-                    <div class="bg-gray-800/50 p-3 rounded-xl border border-gray-600 space-y-2 shadow-inner">
-                        <p class="text-[10px] font-black text-gray-300 uppercase tracking-wider">Contenido del Bulto</p>
+                    <div class="bg-gray-800/50 p-3 rounded-xl border border-gray-600 space-y-2">
+                        <p class="text-[10px] font-black text-gray-300 uppercase">Contenido del Bulto</p>
                         <div class="flex gap-2">
                             <input type="text" id="l-item" placeholder="SKU / Desc" class="input-tech flex-1 p-2 rounded-lg text-sm bg-black border-gray-500">
-                            <button onclick="addLabItem()" class="bg-yellow-500 hover:bg-yellow-400 text-black w-12 rounded-lg font-black text-xl flex items-center justify-center shadow-lg transition-colors">
-                                <i data-lucide="plus"></i>
-                            </button>
+                            <button onclick="addLabItem()" class="bg-yellow-500 text-black px-4 rounded-lg font-black flex-shrink-0"><i data-lucide="plus"></i></button>
                         </div>
                     </div>
                     
-                    <ul id="preview-lab-list" class="text-xs text-gray-400 list-disc pl-5 min-h-[20px]"></ul>
+                    <ul id="preview-lab-list" class="text-xs text-gray-400 list-disc pl-5"></ul>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2">
-                    <button onclick="previewDoc('lab')" class="col-span-1 bg-gray-700 text-white p-4 rounded-xl font-bold uppercase shadow-lg text-xs flex flex-col items-center justify-center gap-1">
+                    <button onclick="previewDoc('lab')" class="col-span-1 bg-gray-700 text-white p-4 rounded-xl font-bold uppercase text-xs flex flex-col items-center">
                         <i data-lucide="eye"></i> Vista Previa
                     </button>
-                    <button onclick="exportLab()" class="col-span-2 bg-white text-black p-4 rounded-xl font-black uppercase shadow-lg flex justify-center items-center gap-2 hover:bg-gray-200">
+                    <button onclick="exportLab()" class="col-span-2 bg-white text-black p-4 rounded-xl font-black uppercase flex justify-center items-center gap-2">
                         <i data-lucide="tag"></i> Imprimir Rótulo
                     </button>
                 </div>
@@ -337,7 +316,7 @@
                 <h2 class="text-2xl font-cyber font-bold mb-4 text-blue-400">Tareas</h2>
                 <div class="flex gap-2 mb-4">
                     <input type="text" id="t-input" placeholder="Nueva tarea..." class="input-tech w-full p-3 rounded-xl">
-                    <button onclick="addTask()" class="bg-blue-600 hover:bg-blue-500 px-6 rounded-xl font-bold transition-colors">+</button>
+                    <button onclick="addTask()" class="bg-blue-600 px-6 rounded-xl font-bold">+</button>
                 </div>
                 <div id="tasks-list" class="space-y-2"></div>
             </section>
@@ -352,7 +331,7 @@
                         <option>ERROR DESPACHO</option>
                         <option>RECHAZO CLIENTE</option>
                     </select>
-                    <button onclick="registrarDev()" class="w-full bg-red-600 hover:bg-red-500 p-3 rounded-xl font-bold uppercase shadow-lg">Procesar Devolución</button>
+                    <button onclick="registrarDev()" class="w-full bg-red-600 p-3 rounded-xl font-bold uppercase">Procesar Devolución</button>
                 </div>
             </section>
 
@@ -368,117 +347,90 @@
                 <div onclick="nav('devs')" class="dock-btn" id="n-devs"><i data-lucide="rotate-ccw"></i><span>Devol</span></div>
             </nav>
         </div>
-
     </div>
 
-    <div id="sig-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[6000] hidden flex-col justify-center items-center">
-        <div class="bg-white w-full h-full flex flex-col p-4">
-            <h2 class="text-black text-center font-bold text-xl mb-2 uppercase">Firma de Conformidad</h2>
-            <div class="flex-1 border-4 border-dashed border-gray-300 rounded-2xl bg-gray-50 overflow-hidden relative">
+    <div id="sig-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[6000] hidden flex-col justify-center items-center p-4">
+        <div class="bg-white w-full max-w-md h-[400px] flex flex-col p-4 rounded-3xl">
+            <h2 class="text-black text-center font-bold mb-2 uppercase">Firma Recibido</h2>
+            <div class="flex-1 border-2 border-gray-200 rounded-xl relative overflow-hidden bg-gray-50">
                 <canvas id="sig-canvas" class="w-full h-full block touch-none"></canvas>
-                <div class="absolute bottom-2 left-0 right-0 text-center text-gray-300 text-xs pointer-events-none uppercase font-black tracking-widest">Área de Firma (Pantalla Completa)</div>
             </div>
-            <div class="grid grid-cols-2 gap-4 mt-4 h-14">
-                <button onclick="closeSig(false)" class="bg-gray-200 text-black font-black rounded-xl uppercase hover:bg-gray-300">Cancelar</button>
-                <button onclick="closeSig(true)" class="bg-black text-white font-black rounded-xl uppercase hover:bg-gray-800">Aceptar Firma</button>
+            <div class="grid grid-cols-2 gap-4 mt-4 h-12">
+                <button onclick="closeSig(false)" class="bg-gray-200 text-black font-black rounded-xl uppercase">Cancelar</button>
+                <button onclick="closeSig(true)" class="bg-black text-white font-black rounded-xl uppercase">Aceptar</button>
             </div>
         </div>
     </div>
 
     <div id="preview-modal" class="fixed inset-0 bg-black/95 z-[7000] hidden flex-col items-center justify-center p-4">
-        <div class="absolute top-4 right-4 z-50">
-            <button onclick="closePreview()" class="bg-red-600 text-white p-3 rounded-full shadow-lg"><i data-lucide="x"></i></button>
+        <div class="absolute top-4 right-4 z-[7001]">
+            <button onclick="closePreview()" class="bg-red-600 text-white p-3 rounded-full"><i data-lucide="x"></i></button>
         </div>
-        <div class="text-white font-bold mb-4 font-cyber text-lg">VISTA PREVIA DE IMPRESIÓN</div>
-        
-        <div class="overflow-auto w-full h-full flex justify-center items-start p-4 bg-gray-900 rounded-xl border border-gray-700">
-            <div id="preview-inject-area" class="origin-top transform scale-[0.4] md:scale-75 shadow-2xl bg-white transition-transform"></div>
+        <div id="preview-inject-area" class="w-full max-w-[90vw] h-[80vh] bg-white rounded-lg overflow-auto flex justify-center"></div>
+    </div>
+
+    <div id="print-area-remi" class="pdf-container">
+        <div style="border-bottom: 4px solid black; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <div>
+                <h1 style="font-size: 32px; font-weight: 900; margin: 0; font-style: italic;">NICHOLL´S TACTICA</h1>
+                <p style="font-size: 10px; letter-spacing: 5px; margin: 0;">ALMACEN PRINCIPAL</p>
+            </div>
+            <div style="text-align: right;">
+                <div style="background: black; color: white; padding: 5px 15px; font-weight: bold;">REMISIÓN</div>
+                <p id="pdf-r-id" style="font-weight: bold; margin-top: 5px;"></p>
+                <p id="pdf-r-date" style="font-size: 10px; color: gray;"></p>
+            </div>
+        </div>
+        <div style="background: #f0f0f0; padding: 15px; margin-bottom: 20px;">
+            <p style="font-size: 10px; margin: 0; color: gray;">DESTINATARIO:</p>
+            <p id="pdf-r-cli" style="font-size: 24px; font-weight: 900; margin: 0; text-transform: uppercase;"></p>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+            <thead>
+                <tr style="background: black; color: white;">
+                    <th style="padding: 10px; text-align: left;">DESCRIPCIÓN</th>
+                    <th style="padding: 10px; text-align: center; width: 80px;">CANT</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-r-body"></tbody>
+        </table>
+        <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+            <div style="width: 250px;">
+                <p style="font-size: 10px; color: gray;">FIRMA RECIBIDO:</p>
+                <img id="pdf-r-sig-img" style="width: 100%; height: 80px; border-bottom: 2px solid black; object-contain: center;" src="">
+            </div>
+            <div id="pdf-r-qr" style="padding: 10px; border: 1px solid #eee;"></div>
         </div>
     </div>
 
-    <div id="print-area-remi" class="pdf-container font-sans">
-        <div class="flex justify-between items-start border-b-4 border-black pb-6 mb-8">
-            <div>
-                <h1 class="text-5xl font-black italic tracking-tighter text-black">NICHOLL´S<span class="text-gray-500">TACTICA S.A.S</span></h1>
-                <p class="text-xs font-bold tracking-[0.4em] uppercase mt-1 text-black">ALMACEN PRINCIPAL</p>
+    <div id="print-area-lab" class="pdf-container" style="border: 15px solid black; padding: 40px;">
+        <div style="text-align: center; border-bottom: 10px solid black; padding-bottom: 30px; margin-bottom: 30px;">
+            <h1 style="font-size: 80px; font-weight: 900; margin: 0;">ALMACEN</h1>
+            <p style="font-size: 20px; font-weight: bold; margin: 0;">NICHOLL´S TACTICA S.A.S</p>
+        </div>
+        <div style="margin-bottom: 40px;">
+            <p style="font-size: 20px; color: gray; margin-bottom: 5px;">DESTINO:</p>
+            <p id="pdf-l-dest" style="font-size: 80px; font-weight: 900; margin: 0; line-height: 1; text-transform: uppercase;"></p>
+        </div>
+        <div style="display: flex; border-top: 10px solid black; border-bottom: 10px solid black; padding: 20px 0; margin-bottom: 30px;">
+            <div style="flex: 1;">
+                <p style="font-size: 15px; color: gray;">PESO:</p>
+                <p id="pdf-l-peso" style="font-size: 60px; font-weight: 900; margin: 0;"></p>
             </div>
-            <div class="text-right">
-                <div class="bg-black text-white px-6 py-2 font-black text-xl uppercase inline-block">REMISIÓN DE ENTREGA</div>
-                <p id="pdf-r-id" class="font-mono font-bold text-xl mt-2 text-black">#000000</p>
-                <p id="pdf-r-date" class="text-xs text-gray-500 font-bold mt-1">Fecha: --/--/----</p>
+            <div style="flex: 1;">
+                <p style="font-size: 15px; color: gray;">BULTOS:</p>
+                <p id="pdf-l-bulto" style="font-size: 60px; font-weight: 900; margin: 0;"></p>
             </div>
         </div>
-
-        <div class="bg-gray-100 p-6 rounded-lg mb-8 border-l-8 border-black">
-            <p class="text-[10px] font-bold text-gray-500 uppercase mb-1">Cliente / Destino:</p>
-            <p id="pdf-r-cli" class="text-3xl font-black uppercase leading-none text-black">NOMBRE DEL CLIENTE</p>
+        <div>
+            <p style="font-size: 15px; color: gray;">CONTENIDO:</p>
+            <ul id="pdf-l-list" style="font-size: 30px; font-weight: bold; list-style: none; padding: 0;"></ul>
         </div>
-
-        <div class="flex-grow">
-            <table class="w-full mb-12 border-collapse">
-                <thead class="bg-black text-white text-sm">
-                    <tr>
-                        <th class="p-3 text-left uppercase font-bold rounded-tl-lg">Descripción del Producto</th>
-                        <th class="p-3 text-center uppercase font-bold w-32 rounded-tr-lg">Cantidad</th>
-                    </tr>
-                </thead>
-                <tbody id="pdf-r-body" class="text-sm font-medium text-black">
-                    </tbody>
-            </table>
-        </div>
-
-        <div class="flex justify-between items-end mt-10 pt-8 border-t-2 border-gray-200">
-            <div class="w-64">
-                <p class="text-[10px] font-bold text-gray-400 uppercase mb-2">Firma Digital Recibido:</p>
-                <img id="pdf-r-sig-img" class="h-24 object-contain border-b border-black w-full" src="">
-                <p class="text-[10px] font-black uppercase mt-1 text-black">Conformidad de Entrega</p>
-            </div>
-            <div class="text-right">
-                <div id="pdf-r-qr"></div>
-                <p class="text-[9px] text-gray-400 mt-2 font-mono">GENERADO POR JULIAN ACOSTA</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="print-area-lab" class="pdf-container font-mono border-[10px] border-black">
-        
-        <div class="flex flex-col h-full justify-between">
-            <div>
-                <div class="text-center border-b-[6px] border-black pb-4 mb-8 pt-4">
-                    <h1 class="text-9xl font-black uppercase tracking-tighter text-black">ALMACEN </h1>
-                    <p class="text-2xl font-bold tracking-[0.5em] mt-2 text-black">NICHOLL´S TACTICA S.A.S</p>
-                </div>
-                
-                <div class="mb-10 px-8">
-                    <p class="text-sm font-bold text-gray-500 uppercase mb-2">Destinatario:</p>
-                    <p id="pdf-l-dest" class="text-7xl font-black uppercase leading-[0.9] break-words text-black">DESTINO AQUI</p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-10 border-y-[6px] border-black py-10 mb-8 px-8 bg-gray-50">
-                    <div>
-                        <p class="text-sm font-bold text-gray-500 uppercase">Peso Bruto</p>
-                        <p id="pdf-l-peso" class="text-6xl font-black text-black">0.0 KG</p>
-                    </div>
-                    <div>
-                        <p class="text-sm font-bold text-gray-500 uppercase">Bultos</p>
-                        <p id="pdf-l-bulto" class="text-6xl font-black text-black">1/1</p>
-                    </div>
-                </div>
-
-                <div class="px-8">
-                    <p class="text-sm font-bold text-gray-500 uppercase mb-4">Contenido:</p>
-                    <ul id="pdf-l-list" class="text-3xl font-bold list-disc pl-10 space-y-3 uppercase text-black">
-                        </ul>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-end px-8 pb-8">
-                <div id="pdf-l-qr" class="border-4 border-black p-2"></div>
-                <div class="text-right">
-                    <p class="text-xs font-black text-gray-500">TRACKING ID</p>
-                    <p id="pdf-l-id" class="text-5xl font-black font-sans text-black">#00000000</p>
-                    <div class="h-16 bg-black w-72 mt-2"></div>
-                </div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 50px;">
+            <div id="pdf-l-qr"></div>
+            <div style="text-align: right;">
+                <p id="pdf-l-id" style="font-size: 40px; font-weight: 900; margin: 0;"></p>
+                <div style="width: 300px; height: 30px; background: black;"></div>
             </div>
         </div>
     </div>
@@ -486,44 +438,27 @@
     <datalist id="list-prods"></datalist>
 
     <script>
-        // --- ESTADO GLOBAL ---
-        let db = JSON.parse(localStorage.getItem('SAGA_V8_DB')) || { 
-            productos: [], movs: [], tasks: [], 
-            remItems: [], labItems: [] 
-        };
+        let db = JSON.parse(localStorage.getItem('SAGA_V8_DB')) || { productos: [], movs: [], tasks: [], remItems: [], labItems: [] };
         let sPad;
-        let activeFilter = 'ALL';
         let op = 'ENTRADA';
 
-        // --- INICIALIZACIÓN ---
         window.onload = () => {
             initSig();
             uClock(); setInterval(uClock, 1000);
             renderAll();
             lucide.createIcons();
-            
             if(db.remItems.length > 0) renderRemList();
-            if(db.labItems.length > 0) {
-                 document.getElementById('preview-lab-list').innerHTML = db.labItems.map(x => `<li>${x}</li>`).join('');
-            }
         };
 
         function setMode(mode) {
             const wrap = document.getElementById('app-wrap');
-            if(mode === 'mobile') {
-                wrap.className = "app-wrapper mode-mobile";
-            } else {
-                wrap.className = "app-wrapper mode-pc";
-            }
-            document.getElementById('device-splash').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('device-splash').style.display = 'none';
-                wrap.classList.remove('hidden');
-                renderMovs();
-            }, 500);
+            wrap.className = mode === 'mobile' ? "app-wrapper mode-mobile" : "app-wrapper mode-pc";
+            document.getElementById('device-splash').style.display = 'none';
+            wrap.classList.remove('hidden');
         }
 
-        const save = () => { localStorage.setItem('SAGA_V8_DB', JSON.stringify(db)); renderAll(); };
+        const save = () => localStorage.setItem('SAGA_V8_DB', JSON.stringify(db));
+        
         function uClock() {
             const n = new Date();
             document.getElementById('live-clock').innerText = n.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -535,318 +470,200 @@
             document.querySelectorAll('.dock-btn').forEach(i => i.classList.remove('active'));
             document.getElementById('sec-'+id).classList.add('active');
             document.getElementById('n-'+id).classList.add('active');
-            
             if(id === 'movs') renderMovs();
             if(id === 'tasks') renderTasks();
             lucide.createIcons();
         }
 
-        // --- OPERACIONES ---
         function setOp(val) {
             op = val;
-            const btnE = document.getElementById('btn-ent');
-            const btnS = document.getElementById('btn-sal');
-            
-            if(op === 'ENTRADA') {
-                btnE.className = "flex-1 py-3 rounded-xl font-black text-sm transition-all bg-emerald-600 text-white shadow-[0_0_15px_rgba(5,150,105,0.4)]";
-                btnS.className = "flex-1 py-3 rounded-xl font-black text-sm text-gray-500 transition-all hover:text-white";
-            } else {
-                btnE.className = "flex-1 py-3 rounded-xl font-black text-sm text-gray-500 transition-all hover:text-white";
-                btnS.className = "flex-1 py-3 rounded-xl font-black text-sm transition-all bg-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.4)]";
-            }
+            document.getElementById('btn-ent').className = op === 'ENTRADA' ? "flex-1 py-3 rounded-xl font-black text-sm transition-all bg-emerald-600 text-white" : "flex-1 py-3 rounded-xl font-black text-sm text-gray-500 transition-all";
+            document.getElementById('btn-sal').className = op === 'SALIDA' ? "flex-1 py-3 rounded-xl font-black text-sm transition-all bg-red-600 text-white" : "flex-1 py-3 rounded-xl font-black text-sm text-gray-500 transition-all";
         }
 
         function registrarMov() {
             const prod = document.getElementById('m-prod').value.toUpperCase();
             const cant = parseFloat(document.getElementById('m-cant').value);
-            const oc = document.getElementById('m-oc').value.toUpperCase();
-            const ubica = document.getElementById('m-ubica').value.toUpperCase();
-            const proc = document.getElementById('m-proc').value.toUpperCase();
-
-            if(!prod || isNaN(cant)) return alert("Faltan datos obligatorios (Producto y Cantidad)");
-
+            if(!prod || isNaN(cant)) return alert("Faltan datos");
             let p = db.productos.find(x => x.nom === prod);
-            if(!p) { p = { nom: prod, stk: 0 }; db.productos.push(p);
-            }
+            if(!p) { p = { nom: prod, stk: 0 }; db.productos.push(p); }
             p.stk += (op === 'ENTRADA' ? cant : -cant);
-            db.movs.push({
-                tipo: op, prod, cant, oc, ubica, proc, ts: new Date().toISOString()
-            });
-            save();
-            alert("✅ Movimiento registrado");
-            ['m-prod','m-cant','m-oc','m-ubica','m-proc'].forEach(id => document.getElementById(id).value = "");
+            db.movs.push({ tipo: op, prod, cant, oc: document.getElementById('m-oc').value.toUpperCase(), ts: new Date().toISOString() });
+            save(); alert("Guardado");
+            renderAll();
+            ['m-prod','m-cant','m-oc'].forEach(id => document.getElementById(id).value = "");
         }
-
-        function filterType(t) { activeFilter = t;
-            renderMovs(); }
 
         function renderMovs() {
             const tbody = document.getElementById('movs-table-body');
-            const search = document.getElementById('h-search').value.toUpperCase();
-            const fDesde = document.getElementById('f-desde').value;
-            const fHasta = document.getElementById('f-hasta').value;
-
-            tbody.innerHTML = "";
-            let count = 0;
-            const filtrados = db.movs.slice().reverse().filter(m => {
-                const dateOk = (!fDesde || m.ts.split('T')[0] >= fDesde) && (!fHasta || m.ts.split('T')[0] <= fHasta);
-                const typeOk = activeFilter === 'ALL' || m.tipo === activeFilter;
-                const textOk = m.prod.includes(search) || m.oc.includes(search) || (m.ubica && m.ubica.includes(search));
-                
-                return dateOk && typeOk && textOk;
-            });
-
-            if(filtrados.length === 0) {
-                document.getElementById('no-results').classList.remove('hidden');
-            } else {
-                document.getElementById('no-results').classList.add('hidden');
-                filtrados.forEach(m => {
-                    count++;
-                    const isEnt = m.tipo === 'ENTRADA';
-                    const colorClass = isEnt ? 'text-emerald-400' : 'text-red-400';
-                    const badgeClass = isEnt ? 'bg-emerald-900/30 text-emerald-400 border-emerald-800' : 'bg-red-900/30 text-red-400 border-red-800';
-                    const dateStr = new Date(m.ts).toLocaleString('es-ES', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
-
-                    const row = `
-                        <tr>
-                            <td class="text-gray-400 font-mono text-xs">${dateStr}</td>
-                            <td><span class="px-2 py-1 rounded text-[9px] font-black border ${badgeClass}">${m.tipo}</span></td>
-                            <td class="font-bold text-white">${m.prod}</td>
-                            <td class="font-black ${colorClass} text-lg">${isEnt ? '+' : '-'}${m.cant}</td>
-                            <td>
-                                <div class="text-[10px] text-gray-400">REF: ${m.oc || '-'}</div>
-                                <div class="text-[10px] text-cyan-600 font-bold">UBI: ${m.ubica || 'N/A'}</div>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-            }
+            tbody.innerHTML = db.movs.slice().reverse().map(m => `
+                <tr>
+                    <td class="text-xs text-gray-400 font-mono">${new Date(m.ts).toLocaleDateString()}</td>
+                    <td><span class="px-2 py-0.5 rounded text-[9px] ${m.tipo==='ENTRADA'?'bg-emerald-900/40 text-emerald-400':'bg-red-900/40 text-red-400'}">${m.tipo}</span></td>
+                    <td class="font-bold">${m.prod}</td>
+                    <td class="font-black text-lg">${m.cant}</td>
+                    <td class="text-[10px] text-gray-400">${m.oc || '-'}</td>
+                </tr>
+            `).join('');
         }
 
-        // --- FUNCIONES REMISION ---
         function addRemItem() {
             const i = document.getElementById('r-item').value.toUpperCase();
             const q = document.getElementById('r-q').value;
-            if(i && q) {
-                db.remItems.push({ desc: i, cant: q });
-                renderRemList();
-                document.getElementById('r-item').value=""; document.getElementById('r-q').value="";
-                save();
-            }
+            if(i && q) { db.remItems.push({ desc: i, cant: q }); renderRemList(); document.getElementById('r-item').value=""; document.getElementById('r-q').value=""; save(); }
         }
+
         function renderRemList() {
             const list = document.getElementById('preview-remi-list');
             const msg = document.getElementById('remi-empty-msg');
-            if(db.remItems.length > 0) {
-                msg.style.display = 'none';
-                list.innerHTML = db.remItems.map((item, idx) => `
-                    <tr>
-                        <td class="py-1">• ${item.desc}</td>
-                        <td class="text-right font-bold">${item.cant}</td>
-                    </tr>
-                `).join('');
-            } else {
-                msg.style.display = 'block';
-                list.innerHTML = '';
-            }
+            msg.style.display = db.remItems.length > 0 ? 'none' : 'block';
+            list.innerHTML = db.remItems.map(item => `<tr><td class="py-1 border-b border-gray-800">• ${item.desc}</td><td class="text-right font-bold py-1 border-b border-gray-800">${item.cant}</td></tr>`).join('');
         }
 
-        // --- FUNCIONES ROTULOS ---
         function addLabItem() {
             const i = document.getElementById('l-item').value.toUpperCase();
-            if(i) {
-                db.labItems.push(i);
-                document.getElementById('preview-lab-list').innerHTML = db.labItems.map(x => `<li>${x}</li>`).join('');
-                document.getElementById('l-item').value = "";
-                save();
-            }
+            if(i) { db.labItems.push(i); document.getElementById('preview-lab-list').innerHTML = db.labItems.map(x => `<li>${x}</li>`).join(''); document.getElementById('l-item').value = ""; save(); }
         }
 
-        // --- GENERACIÓN DE DATOS PARA PDF Y PREVIEW ---
         function prepareRemiData() {
             document.getElementById('pdf-r-cli').innerText = document.getElementById('r-cli').value || "CLIENTE GENERAL";
-            document.getElementById('pdf-r-id').innerText = "#" + Date.now().toString().slice(-6);
-            document.getElementById('pdf-r-date').innerText = new Date().toLocaleDateString();
-            
-            const tbody = document.getElementById('pdf-r-body');
-            tbody.innerHTML = db.remItems.map(it => `
-                <tr class="border-b border-gray-200">
-                    <td class="p-3 uppercase text-sm">${it.desc}</td>
-                    <td class="p-3 text-center font-bold text-lg">${it.cant}</td>
+            document.getElementById('pdf-r-id').innerText = "#REM-" + Date.now().toString().slice(-6);
+            document.getElementById('pdf-r-date').innerText = "FECHA: " + new Date().toLocaleDateString();
+            document.getElementById('pdf-r-body').innerHTML = db.remItems.map(it => `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px; font-size: 14px; text-transform: uppercase;">${it.desc}</td>
+                    <td style="padding: 12px; text-align: center; font-weight: bold; font-size: 16px;">${it.cant}</td>
                 </tr>
             `).join('');
             document.getElementById('pdf-r-qr').innerHTML = "";
-            new QRCode(document.getElementById('pdf-r-qr'), { text: "REM-"+Date.now(), width: 60, height: 60 });
+            new QRCode(document.getElementById('pdf-r-qr'), { text: "REMISION-"+Date.now(), width: 80, height: 80 });
         }
 
         function prepareLabData() {
             document.getElementById('pdf-l-dest').innerText = document.getElementById('l-dest').value || "SIN DESTINO";
             document.getElementById('pdf-l-peso').innerText = (document.getElementById('l-peso').value || "0") + " KG";
             document.getElementById('pdf-l-bulto').innerText = document.getElementById('l-bulto').value || "1/1";
-            document.getElementById('pdf-l-id').innerText = "#" + Math.floor(Math.random()*99999999);
-            document.getElementById('pdf-l-list').innerHTML = db.labItems.map(x => `<li>${x}</li>`).join('');
-
+            document.getElementById('pdf-l-id').innerText = "#ID-" + Math.floor(Math.random()*999999);
+            document.getElementById('pdf-l-list').innerHTML = db.labItems.map(x => `<li>• ${x}</li>`).join('');
             document.getElementById('pdf-l-qr').innerHTML = "";
-            new QRCode(document.getElementById('pdf-l-qr'), { text: "LAB-"+Date.now(), width: 100, height: 100 });
+            new QRCode(document.getElementById('pdf-l-qr'), { text: "ROTULO-"+Date.now(), width: 120, height: 120 });
         }
 
-        // --- VISTA PREVIA ---
         function previewDoc(type) {
             const modal = document.getElementById('preview-modal');
-            const container = document.getElementById('preview-inject-area');
-            container.innerHTML = ""; // Limpiar anterior
-
-            if(type === 'remi') {
-                prepareRemiData();
-                const node = document.getElementById('print-area-remi').cloneNode(true);
-                // Quitar clases ocultas y ajustar para preview
-                node.style.position = 'relative';
-                node.style.left = '0';
-                node.style.top = '0';
-                node.style.display = 'flex'; // Importante para que tome el flexbox del diseño
-                container.appendChild(node);
-            } else {
-                prepareLabData();
-                const node = document.getElementById('print-area-lab').cloneNode(true);
-                node.style.position = 'relative';
-                node.style.left = '0';
-                node.style.top = '0';
-                node.style.display = 'block';
-                // Para el rotulo que usa flex height
-                node.style.display = 'flex';
-                node.style.flexDirection = 'column';
-                container.appendChild(node);
-            }
-
+            const inject = document.getElementById('preview-inject-area');
+            if(type === 'remi') prepareRemiData(); else prepareLabData();
+            const source = document.getElementById(type === 'remi' ? 'print-area-remi' : 'print-area-lab');
+            const clone = source.cloneNode(true);
+            clone.style.position = 'relative';
+            clone.style.left = '0';
+            clone.style.top = '0';
+            clone.style.visibility = 'visible';
+            clone.style.display = 'block';
+            clone.style.margin = '20px';
+            inject.innerHTML = "";
+            inject.appendChild(clone);
             modal.style.display = 'flex';
         }
 
-        function closePreview() {
-            document.getElementById('preview-modal').style.display = 'none';
-        }
+        function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
 
-        // --- EXPORTAR PDF (MODIFICADO PARA ARREGLAR HOJA BLANCA) ---
         async function exportRem() {
-            prepareRemiData();
-            if(!document.getElementById('pdf-r-sig-img').src) alert("Nota: Documento sin firma.");
-
             const element = document.getElementById('print-area-remi');
+            prepareRemiData();
             
-            // TRUCO: Mover temporalmente el elemento a la vista (pero detrás) para que html2pdf lo vea
-            const originalLeft = element.style.left;
-            const originalZ = element.style.zIndex;
-            
+            // Fix para PDF Blanco: forzar visibilidad y scroll al inicio
+            element.style.visibility = 'visible';
             element.style.left = '0';
             element.style.top = '0';
-            element.style.zIndex = '-9999';
 
             const opt = {
                 margin: 0,
                 filename: `REMISION_${Date.now()}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+                html2canvas: { scale: 2, useCORS: true, logging: false, y: 0 },
                 jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
             };
-            
+
             try {
                 await html2pdf().set(opt).from(element).save();
+                db.remItems = []; renderRemList(); save();
             } catch (e) {
-                console.error(e);
+                alert("Error al generar PDF");
             } finally {
-                // Restaurar estado oculto
-                element.style.left = originalLeft;
-                element.style.zIndex = originalZ;
+                element.style.visibility = 'hidden';
+                element.style.left = '-9999px';
             }
-
-            db.remItems = []; renderRemList(); save();
         }
 
         async function exportLab() {
-            prepareLabData();
             const element = document.getElementById('print-area-lab');
-            
-            // TRUCO: Mover temporalmente el elemento a la vista
-            const originalLeft = element.style.left;
-            const originalZ = element.style.zIndex;
-            
+            prepareLabData();
+            element.style.visibility = 'visible';
             element.style.left = '0';
             element.style.top = '0';
-            element.style.zIndex = '-9999';
 
             const opt = {
                 margin: 0,
                 filename: `ROTULO_${Date.now()}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+                html2canvas: { scale: 2, useCORS: true, logging: false, y: 0 },
                 jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
             };
-            
+
             try {
                 await html2pdf().set(opt).from(element).save();
+                db.labItems = []; document.getElementById('preview-lab-list').innerHTML = ""; save();
             } catch (e) {
-                console.error(e);
+                alert("Error al generar PDF");
             } finally {
-                // Restaurar estado oculto
-                element.style.left = originalLeft;
-                element.style.zIndex = originalZ;
+                element.style.visibility = 'hidden';
+                element.style.left = '-9999px';
             }
-
-            db.labItems = []; document.getElementById('preview-lab-list').innerHTML = ""; save();
         }
 
-        // --- FIRMA DIGITAL ---
         function initSig() {
             const canvas = document.getElementById('sig-canvas');
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-            sPad = new SignaturePad(canvas, { penColor: 'black', backgroundColor: 'rgba(255,255,255,0)' });
-        }
-        function openSig() {
-            document.getElementById('sig-modal').style.display = 'flex';
-            setTimeout(() => {
-                const canvas = document.getElementById('sig-canvas');
-                // Recalcular tamaño basado en el nuevo modal de pantalla completa
+            sPad = new SignaturePad(canvas, { penColor: 'black' });
+            window.addEventListener('resize', () => {
                 const ratio = Math.max(window.devicePixelRatio || 1, 1);
                 canvas.width = canvas.offsetWidth * ratio;
                 canvas.height = canvas.offsetHeight * ratio;
                 canvas.getContext("2d").scale(ratio, ratio);
                 sPad.clear();
-            }, 100);
-        }
-        function closeSig(saveSig) {
-            if(saveSig && !sPad.isEmpty()) {
-                document.getElementById('pdf-r-sig-img').src = sPad.toDataURL();
-            }
-            document.getElementById('sig-modal').style.display = 'none';
+            });
         }
 
-        // --- TAREAS Y EXTRAS ---
-        function addTask() {
-            const t = document.getElementById('t-input').value;
-            if(t) { db.tasks.push({ id: Date.now(), txt: t, done: false }); save(); renderTasks(); document.getElementById('t-input').value = "";
-            }
+        function openSig() {
+            document.getElementById('sig-modal').style.display = 'flex';
+            setTimeout(() => {
+                const canvas = document.getElementById('sig-canvas');
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                sPad.clear();
+            }, 200);
         }
-        function renderTasks() {
-            document.getElementById('tasks-list').innerHTML = db.tasks.map(t => `
-                <div class="glass-panel p-3 flex items-center gap-3 ${t.done?'opacity-50':''}" onclick="toggleT(${t.id})">
-                    <i data-lucide="${t.done?'check-circle':'circle'}" class="w-5 h-5 text-blue-400"></i>
-                    <span class="${t.done?'line-through':''} text-sm font-bold">${t.txt}</span>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-        function toggleT(id) { const t = db.tasks.find(x=>x.id===id); t.done=!t.done; save(); renderTasks();
+
+        function closeSig(confirm) {
+            if(confirm && !sPad.isEmpty()) document.getElementById('pdf-r-sig-img').src = sPad.toDataURL();
+            document.getElementById('sig-modal').style.display = 'none';
         }
 
         function renderAll() {
             document.getElementById('kpi-stock').innerText = db.productos.reduce((a,b)=>a+b.stk, 0);
-            const hoy = new Date().toISOString().split('T')[0];
-            document.getElementById('kpi-movs').innerText = db.movs.filter(m => m.ts.startsWith(hoy)).length;
+            document.getElementById('kpi-movs').innerText = db.movs.length;
             document.getElementById('list-prods').innerHTML = db.productos.map(p => `<option value="${p.nom}">`).join('');
         }
+
+        function addTask() {
+            const t = document.getElementById('t-input').value;
+            if(t) { db.tasks.push({ id: Date.now(), txt: t, done: false }); save(); renderTasks(); document.getElementById('t-input').value = ""; }
+        }
+        function renderTasks() {
+            document.getElementById('tasks-list').innerHTML = db.tasks.map(t => `<div class="glass-panel p-3 flex items-center gap-3 ${t.done?'opacity-50':''}" onclick="toggleT(${t.id})"><i data-lucide="${t.done?'check-circle':'circle'}"></i><span class="${t.done?'line-through':''}">${t.txt}</span></div>`).join('');
+            lucide.createIcons();
+        }
+        function toggleT(id) { const t = db.tasks.find(x=>x.id===id); t.done=!t.done; save(); renderTasks(); }
     </script>
 </body>
 </html>
